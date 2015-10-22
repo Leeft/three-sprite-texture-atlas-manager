@@ -5,8 +5,7 @@
 import Knapsack from './knapsack';
 
 class TextureManager {
-  constructor( scene, size ) {
-    this.scene = scene;
+  constructor( size ) {
     this.size = ( typeof size === 'number' && /^(128|256|512|1024|2048|4096|8192|16384)$/.test( size ) ) ? size : 1024;
     this.knapsacks = [];
     this.debug = false;

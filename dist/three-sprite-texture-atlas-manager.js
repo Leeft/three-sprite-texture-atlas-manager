@@ -314,10 +314,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
   })();
 
   var TextureManager = (function () {
-    function TextureManager(scene, size) {
+    function TextureManager(size) {
       _classCallCheck(this, TextureManager);
 
-      this.scene = scene;
       this.size = typeof size === 'number' && /^(128|256|512|1024|2048|4096|8192|16384)$/.test(size) ? size : 1024;
       this.knapsacks = [];
       this.debug = false;

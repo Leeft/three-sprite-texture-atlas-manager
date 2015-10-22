@@ -33,7 +33,7 @@ describe('basic class behaviour', () => {
   let tm;
 
   it( 'instantiates correctly', () => {
-    tm = new threeSpriteTextureAtlasManager( {}, 256 );
+    tm = new threeSpriteTextureAtlasManager( 256 );
     expect(tm).to.be.an('object');
     expect(tm).to.be.an.instanceof( threeSpriteTextureAtlasManager );
   });
@@ -46,25 +46,25 @@ describe('basic class behaviour', () => {
 
   [ 128, 256, 512, 1024, 2048, 4096, 8192, 16384 ].forEach( (size) => {
     it( 'texture size of ' + size + ' is accepted', () => {
-      tm = new threeSpriteTextureAtlasManager( {}, size );
+      tm = new threeSpriteTextureAtlasManager( size );
       expect(tm.textureSize).to.be.a('number')
         .that.equals( size );
     });
   });
 
   it( 'textureSize defaults to 1024 on invalid textureSize', () => {
-    tm = new threeSpriteTextureAtlasManager( {}, 'plonk' );
+    tm = new threeSpriteTextureAtlasManager( 'plonk' );
     expect(tm.textureSize).to.be.a('number')
       .that.equals( 1024 );
 
-    tm = new threeSpriteTextureAtlasManager( {}, 123 );
+    tm = new threeSpriteTextureAtlasManager( 123 );
     expect(tm.textureSize).to.be.a('number')
       .that.equals( 1024 );
   });
 });
 
 describe('multiple knapsack allocation', () => {
-  let tm = new threeSpriteTextureAtlasManager( {}, 256 );
+  let tm = new threeSpriteTextureAtlasManager( 256 );
   let one, two, three, four, five, six, seven, eight;
 
   it( 'has no knapsacks to start with', () => {
@@ -257,9 +257,7 @@ describe('multiple knapsack allocation', () => {
 
 // More in depth, testing the code which also uses the THREE.js mocks
 describe('in depth testing: full size node', () => {
-  let tm = new threeSpriteTextureAtlasManager( {
-    add: function( obj ) {},
-  }, 256 );
+  let tm = new threeSpriteTextureAtlasManager( 256 );
 
   it( 'allocated a node as large as the knapsack', () => {
     return tm.allocateNode( tm.textureSize, tm.textureSize ).then(
@@ -282,9 +280,7 @@ describe('in depth testing: full size node', () => {
 
 // More in depth, testing the code which also uses the THREE.js mocks
 describe('threeSpriteTextureAtlasManager', () => {
-  let tm = new threeSpriteTextureAtlasManager( {
-    add: function( obj ) {},
-  }, 256 );
+  let tm = new threeSpriteTextureAtlasManager( 256 );
 
   it( 'allocated a node for in-depth testing', () => {
     return tm.allocateNode( tm.textureSize / 2, tm.textureSize / 2 ).then(
