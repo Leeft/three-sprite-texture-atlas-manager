@@ -8,6 +8,8 @@
 
 A "sprite texture atlas" manager for [three.js](http://threejs.org/) r73 (and up). This module allows you to cut up a canvas into several chunks, and then assign each of these chunks to a sprite in your scene. You draw in the canvas yourself, e.g. rendering text there with the canvas context functions.
 
+![example of a generated sprite atlas](screenshots/sprite-atlas-example.png "Actual example of a generated sprite atlas")
+
 Splitting up a canvas in a texture atlas helps to maximise the use of GPU memory, as newer three.js versions are able to be tricked into sharing the texture on the GPU across sprites by making sure their `.uuid` properties do not change. You can use this library with older versions of three.js, but you would miss out on most of the GPU memory advantages.
 
 This library makes use of [Promises](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Promise), which means that to support IE11 in your WebGL application while making use of this library you'll need a provide a polyfill.
