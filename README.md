@@ -26,7 +26,9 @@ Missing from the example is how you can free and reallocate nodes, e.g. if you'r
 ### Usage ###
 
 ```javascript
-var textureManager = new window.threeSpriteAtlasTextureManager(256);
+// We want textures of 1024x1024 pixels (must be a power of two)
+var textureManager = new window.threeSpriteAtlasTextureManager( 1024 );
+
 // Make the sprite allocation code render some blue, purple and screen
 // borders in the nodes (this helps troubleshooting)
 textureManager.debug = true;
@@ -37,6 +39,7 @@ var words = [
     'as', 'much', 'GPU', 'memory', 'as possible'
 ];
 
+// Some settings for the text we're creating
 var fontStyle = "Bold 120px 'Segoe UI', 'Lucida Grande', 'Tahoma', 'Calibri', 'Roboto', sans-serif";
 var xPadding = 30;
 var yPadding = 30;
@@ -83,7 +86,7 @@ words.forEach(function (text) {
 });
 
 // When all the promises are resolved, we're ready to pull out the
-// canvases and put them in the DOM
+// canvases and put them in the DOM so that we can see what happened
 Promise.all(nodes).then(function () {
     textureManager.knapsacks.forEach(function (knapsack) {
         document.getElementById('canvases').appendChild(knapsack.canvas);
