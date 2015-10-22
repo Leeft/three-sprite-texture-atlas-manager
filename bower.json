@@ -1,0 +1,31 @@
+{
+  "name": "three-sprite-texture-atlas-manager",
+  "version": "0.0.1",
+  "authors": [
+    "Lianna Eeftinck <liannaee@gmail.com> (https://github.com/Leeft/)"
+  ],
+  "description": "three.js Sprite Texture Atlas Manager",
+  "main": "dist/three-sprite-texture-atlas-manager.js",
+  "moduleType": [
+    "es6",
+    "globals",
+    "node"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/Leeft/three-sprite-texture-atlas-manager",
+  "private": true,
+  "keywords": [
+    "three.js",
+    "sprite",
+    "sprite texture",
+    "texture atlas",
+    "texture manager"
+  ],
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
