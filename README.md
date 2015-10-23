@@ -28,11 +28,11 @@ Missing from the example is how you can free and reallocate nodes, e.g. if you'r
 ### Usage ###
 
 ```javascript
-// We want textures of 1024x1024 pixels (must be a power of two)
-var textureManager = new window.threeSpriteAtlasTextureManager( 1024 );
 
+// We want textures of 1024x1024 pixels (always a power of two)
+var textureManager = new window.threeSpriteAtlasTextureManager(1024);
 // Make the sprite allocation code render some blue, purple and screen
-// borders in the nodes (this helps troubleshooting)
+// borders in the nodes (this helps visualisation)
 textureManager.debug = true;
 
 var words = [
@@ -43,8 +43,10 @@ var words = [
 
 // Some settings for the text we're creating
 var fontStyle = "Bold 120px 'Segoe UI', 'Lucida Grande', 'Tahoma', 'Calibri', 'Roboto', sans-serif";
+// A bit of space around the text to try to avoid hitting the edges
 var xPadding = 30;
 var yPadding = 30;
+// Shift the text rendering up or down
 var yOffset = -5;
 
 // Need a canvas to determine the text size
@@ -59,50 +61,54 @@ var nodes = [];
 words.forEach(function (text) {
     // Calculate the width of the text
     var width = widthOfText(text) + xPadding;
-    // You'd base this on your font size, takes some fiddling
+    // You'd base this height on your font size, may take some fiddling
     var height = 120 + yPadding;
 
     // Allocate a node for the text, this returns a promise
-    // which on success resolves with a "node":
-    var promise = textureManager.allocateNode(width, height);
-    promise.then(
+    // which we're adding to the array. On success the
+    // promise resolves with a "node":
+    nodes.push(
+        textureManager.allocateNode( width, height ).then(
+            function (node) {
+                var context = node.clipContext();
+                context.font = fontStyle;
+                context.textAlign = 'center';
+                context.textBaseline = 'middle';
+                context.fillStyle = 'rgb( 0, 0, 0 )';
+                context.fillText(text, 0, yOffset);
+                node.restoreContext();
 
-    function (node) {
-        var context = node.clipContext();
-        context.font = fontStyle;
-        context.textAlign = 'center';
-        context.textBaseline = 'middle';
-        context.fillStyle = 'rgb( 0, 0, 0 )';
-        context.fillText(text, 0, yOffset);
-        node.restoreContext();
-        // If we were using WebGL for this example, here'd you'd be creating your sprite:
-        // var sprite = new THREE.Sprite( new THREE.SpriteMaterial({ map: node.texture }) );
-        // scene.add( sprite );
-    },
-
-    function (error) {
-        console.error("Error allocating node:", error);
-    });
-
-    nodes.push(promise);
+                // If we were using WebGL for this example, here'd you'd be
+                // creating your sprite. node.texture will be a cloned texture
+                // ready to use, with its UV coordinates already set:
+                // var material = new THREE.SpriteMaterial({ map: node.texture });
+                // var sprite = new THREE.Sprite( material ) );
+                // scene.add( sprite );
+            },
+            function (error) {
+                console.error("Error allocating node:", error);
+            }
+        )
+    );
 });
 
 // When all the promises are resolved, we're ready to pull out the
-// canvases and put them in the DOM so that we can see what happened
+// canvases and put them in the DOM so that this fiddle shows them
 Promise.all(nodes).then(function () {
     textureManager.knapsacks.forEach(function (knapsack) {
-        document.getElementById('canvases').appendChild(knapsack.canvas);
+        document.getElementById('canvases').appendChild( knapsack.canvas );
     });
 });
 
 
-// Determine the width required to render the given text. You'll want
-// to use the same (relevant) settings as you would for rendering the text
+// Helper: determine the width required to render the given text. You'll want
+// to use the same (relevant) settings as you would when rendering the text
 function widthOfText(text) {
     var context = canvas.getContext('2d');
     context.font = fontStyle;
     return (Math.floor(context.measureText(text).width));
 }
+
 ```
 
 ### License ###
