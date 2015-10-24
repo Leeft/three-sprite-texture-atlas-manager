@@ -25,7 +25,7 @@ global.document = {
         },
       };
     }
-    throw new Error(`This simple mock doesn't know that element type`);
+    throw new Error(`This simple mock doesn't know element type ${ name }`);
   }
 };
 
