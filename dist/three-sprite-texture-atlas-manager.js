@@ -32,7 +32,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
     /**
     Represents a single rectangular area "node" within a texture atlas canvas, which may have its own {@link external:Texture|`THREE.Texture`} with the UV coordinates managed for you. These nodes are created through {@link module:texture-manager#allocateNode|`allocateNode()`}.
-     The implementation is based on [http://www.blackpawn.com/texts/lightmaps/default.html](http://www.blackpawn.com/texts/lightmaps/default.html).
+     The implementation is based on [http://www.blackpawn.com/texts/lightmaps/default.html](http://www.blackpawn.com/texts/lightmaps/default.html). Visit that page for a good impression of what we're achieving here.
+     See http://jsfiddle.net/Shiari/sbda72k9/ for a more complete and working example than the one below.
      @module texture-manager/knapsack/node
     @example
     tetureManager.allocateNode( 100, 20 ).then(
@@ -48,6 +49,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     */
 
     /**
+     * Do not use this directly, it is managed for you.
      * @constructor
      * @param {Knapsack} - The {@link module:texture-manager/knapsack|`Knapsack`} this node is to become a part of.
      */
@@ -110,6 +112,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
        * @type {Knapsack}
        * @private
        * @readonly
+       * @category provider
        */
       this.knapsack = knapsack;
 
@@ -118,6 +121,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
        * @type {KnapsackNode}
        * @private
        * @readonly
+       * @category provider
        */
       this.leftChild = null;
 
@@ -126,6 +130,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
        * @type {KnapsackNode}
        * @private
        * @readonly
+       * @category provider
        */
       this.rightChild = null;
 
@@ -134,6 +139,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
        * @type {KnapsackRectangle}
        * @private
        * @readonly
+       * @category information
        */
       this.rectangle = null;
       // Overwritten when children are created, but done as a default here to keep
@@ -143,7 +149,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       /**
        * Internal unique ID for the image this node represents.
        * @type {string}
+       * @private
        * @readonly
+       * @category information
        */
       this.imageID = null;
 
@@ -165,6 +173,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
      * The HTML `<canvas>` element as supplied by the {@link module:texture-manager/knapsack|`Knapsack`} which this node is part of.
      * @type {external:canvas}
      * @readonly
+     * @category provider
      */
 
     _createClass(KnapsackNode, [{
@@ -173,6 +182,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       /**
        * Returns true if this node has any children, which means it's not available to be drawn in. Its children may be suitable for this though.
        * @returns {boolean}
+       * @category information
        * @private
        */
       value: function hasChildren() {
@@ -182,6 +192,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       /**
        * Returns true if this node is available to be used by a texture (i.e. it's not yet been claimed by {@link module:texture-manager/knapsack/node#claim|`claim()`}.
        * @returns {boolean} Indicates whether this node has been claimed or not.
+       * @category information
        * @private
        */
     }, {
@@ -191,8 +202,15 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       }
 
       /**
-       * The UV coordinates which describe where in the texture this node is located.
+       * The UV coordinates which describe where in the texture this node is located. This is probably not of any practical use to you as a user of this library; it is used internally to map the texture correctly to a sprite.
        * @returns {Array} Array with [ left, top, right, bottom ] coordinates.
+       * @category information
+       * @example
+       * var uvs = node.uvCoordinates();
+       * var left   = uvs[ 0 ];
+       * var top    = uvs[ 1 ];
+       * var right  = uvs[ 2 ];
+       * var bottom = uvs[ 3 ];
        */
     }, {
       key: 'uvCoordinates',
@@ -203,6 +221,11 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
       /**
        * Release this node back to the {@link module:texture-manager/knapsack|`Knapsack`} where it is contained. This makes it available to be used by new sprites. Only nodes without children can be released, but a user of this library will only get these leaf nodes returned. Branch nodes are used internally only.
+       * @category allocation
+       * @example
+       * node.release();
+       * // or, if you like typing:
+       * textureManager.release( node );
        */
     }, {
       key: 'release',
@@ -224,6 +247,10 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
       /**
        * Clear the area of this node: it erases the context so that it is empty and transparent, and ready to be drawn to.
+       * @category drawing
+       * @example
+       * // Erase the contents of the sprite
+       * node.clear();
        */
     }, {
       key: 'clear',
@@ -232,8 +259,18 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       }
 
       /**
-       * Set the drawing context tailored towards the area of the sprite, clipping anything outside of it. Plus it sets the drawing position to the center of the node, which makes it easy to draw centered text in the node. When done drawing, use {@link module:texture-manager/knapsack/node#restoreContext|`restoreContext()`} to restore the original drawing context.
+       * Set the drawing context tailored towards the area of the sprite, clipping anything outside of it. When done drawing, use {@link module:texture-manager/knapsack/node#restoreContext|`restoreContext()`} to restore the original drawing context.
        * @returns {CanvasRenderingContext2D} Render context configured exclusively for the sprite we're working on.
+       * @category drawing
+       * @example
+       * var context = node.clipContext();
+       * // Draw a 5px border along the edge of the sprite, some
+       * // of it will fall outside the area, but it is clipped.
+       * context.lineWidth = 5.0;
+       * context.strokeStyle = 'rgba(255,0,0,1)';
+       * context.strokeRect( 0, 0, node.width, node.height );
+       * // other drawing commands
+       * node.restoreContext();
        */
     }, {
       key: 'clipContext',
@@ -249,6 +286,16 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
       /**
        * Restore the draw context of the {@link module:texture-manager/knapsack/node#canvas|`canvas`}. Call this when done drawing the sprite.
+       * @category drawing
+       * @example
+       * var context = node.clipContext();
+       * // Draw a 5px border along the edge of the sprite, some
+       * // of it will fall outside the area, but it is clipped.
+       * context.lineWidth = 5.0;
+       * context.strokeStyle = 'rgba(255,0,0,1)';
+       * context.strokeRect( 0, 0, node.width, node.height );
+       * // other drawing commands
+       * node.restoreContext();
        */
     }, {
       key: 'restoreContext',
@@ -261,7 +308,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
        * @param {integer} width
        * @param {integer} height
        * @returns {KnapsackNode} A new node which describes a rectangular area in the knapsack.
-       * @private
+       * @ignore
+       * @category allocation
        */
     }, {
       key: 'allocate',
@@ -333,7 +381,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
       /**
        * Claim the node to be in use by giving it a (unique) ID for an image, this prevents it from being used for another image. After calling this method it is ready to be drawn.
-       * @private
+       * @ignore
+       * @category allocation
        */
     }, {
       key: 'claim',
@@ -358,6 +407,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
        * Convenience accessor for the {@link external:CanvasRenderingContext2D} which is associated with the {@link module:texture-manager/knapsack/node#canvas}. You can use this context to draw on the entire canvas, but you'll probably want to use {@link module:texture-manager/knapsack/node#clipContext|`clipContext()`} instead.
        * @type {external:CanvasRenderingContext2D}
        * @readonly
+       * @category provider
        */
     }, {
       key: 'context',
@@ -369,6 +419,11 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
        * The width in pixels of this sprite's texture node.
        * @type {integer}
        * @readonly
+       * @category information
+       * @example
+       * textureManager.allocateNode( 30, 10 ).then( function( node ) {
+       *   console.log( node.width ); // => 30
+       * });
        */
     }, {
       key: 'width',
@@ -380,6 +435,11 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
        * The height in pixels of this sprite's texture node.
        * @type {integer}
        * @readonly
+       * @category information
+       * @example
+       * textureManager.allocateNode( 30, 10 ).then( function( node ) {
+       *   console.log( node.height ); // => 10
+       * });
        */
     }, {
       key: 'height',
@@ -391,6 +451,15 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
        * Lazily built {@link external:Texture|`THREE.Texture`}, with it's UV coordinates already set for you. You can pass this texture straight to your material, and the GPU memory it requires should be shared with all other texture nodes on the same texture.
        * @type {external:Texture}
        * @readonly
+       * @category provider
+       * @example
+       * var material = new THREE.SpriteMaterial({
+       *   map: node.texture,
+       *   transparent: true,
+       *   blending: THREE.AdditiveBlending
+       * });
+       * var sprite = new THREE.Sprite( material );
+       * scene.add( sprite );
        */
     }, {
       key: 'texture',
@@ -428,22 +497,25 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     Build and destroy "nodes" in your texture atlas easily. It builds one or more {@link module:texture-manager/knapsack|`Knapsack`} objects for you, each of which represent a separate square texture atlas with one or more sprite textures of a size defined by you.
      @module texture-manager
      @example
-      // ES2015 modules
-      import TextureManager from 'three-sprite-texture-atlas-manager';
-      var textureManager = new TextureManager();
-     @example
-      // node.js, requirejs
-      var TextureManager = require('three-sprite-texture-atlas-manager');
-      var textureManager = new TextureManager();
-     @example
-      // global
-      var textureManager = new window.threeSpriteAtlasTextureManager();
+    // Import ES2015 modules
+    import TextureManager from 'three-sprite-texture-atlas-manager';
+    var textureManager = new TextureManager();
+     // node.js or requirejs require()
+    var TextureManager = require('three-sprite-texture-atlas-manager');
+    var textureManager = new TextureManager();
+     // global namespace
+    var textureManager = new window.threeSpriteAtlasTextureManager();
      *
      */
 
     /**
       * @constructor
       * @param {integer} [size=1024] Optional size for the textures. Must be a power of two.
+      * @example
+      * // We want 512x512 pixel textures
+      * var textureManager = new TextureManager( 512 );
+      * ...
+      * textureManager.allocateNode( ... );
       */
 
     /**
@@ -498,22 +570,35 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       _classCallCheck(this, TextureManager);
 
       /**
-       * The size of the textures as validated after constructing the object.
-       * @member {integer} size
-       * @readonly
+       * The size of the textures as was validated when constructing the object.
+       * @namespace module:texture-manager~TextureManager#size
+       * @type {integer}
+       * @ignore
+       * @category readonly
        */
       this.size = typeof size === 'number' && /^(128|256|512|1024|2048|4096|8192|16384)$/.test(size) ? size : 1024;
 
       /**
        * As the texture manager allocates nodes, it creates a new {@link module:texture-manager/knapsack|`Knapsack`} when it needs to provide space for nodes. This is an array with all the knapsacks which have been created.
-       * @member {Knapsack[]} knapsacks
+       * @namespace module:texture-manager~TextureManager#knapsacks
+       * @type {Knapsack[]}
        * @readonly
+       * @category readonly
+       * @example
+       * // Show the canvases in the DOM element with id="canvases"
+       * // (you'd normally do this from the browser console)
+       * textureManager.knapsacks.forEach( function( knapsack ) {
+       *   document.getElementById('canvases').appendChild( knapsack.canvas );
+       * });
        */
       this.knapsacks = [];
 
       /**
        * The debug property can be set to `true` after instantiating the object, which will make the {@link module:texture-manager/knapsack/node|`KnapsackNode`} class draw outlines as it allocates nodes. This can make it much more obvious what is going on, such as whether your text is properly sized and centered.
-       * @member {boolean} debug
+       * @namespace module:texture-manager~TextureManager#debug
+       * @type {boolean}
+       * @example
+       * textureManager.debug = true;
        */
       this.debug = false;
     }
@@ -537,7 +622,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
      * Add a new knapsack to the texture manager.
      * @param {integer} size
      * @returns {Knapsack}
-     * @private
+     * @ignore
      */
 
     _createClass(TextureManager, [{
@@ -552,9 +637,10 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       }
 
       /**
-       * The size of the texture
+       * The actual used size of the texture.
        * @type {integer}
        * @readonly
+       * @category readonly
        */
     }, {
       key: 'allocateNode',
@@ -564,6 +650,18 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
        * @param {integer} width
        * @param {integer} height
        * @returns {external:Promise}
+       * @category allocation
+       * @example
+       * textureManager.allocateNode( 100, 20 ).then(
+       *   function( node ) {
+       *     // Do something with the node in this Promise, such as
+       *     // creating a sprite and adding it to the scene.
+       *   },
+       *   function( error ) {
+       *     // Promise was rejected
+       *     console.error( "Could not allocate node:", error );
+       *   }
+       * );
        */
       value: function allocateNode(width, height) {
         var self = this;
@@ -613,6 +711,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       /**
        * Release the given node.
        * @param {KnapsackNode} node
+       * @category allocation
+       * @example
+       * textureManager.release( node );
        */
     }, {
       key: 'release',

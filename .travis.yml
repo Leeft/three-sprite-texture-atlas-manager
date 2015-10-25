@@ -1,8 +1,7 @@
 language: node_js
 node_js:
   - "0.10"
-  - "0.12"
-  - "io.js"
+  - "4.2.1"
 sudo: false
 script: "gulp coverage"
 after_success:
@@ -11,3 +10,6 @@ after_success:
 addons:
   code_climate:
     repo_token: 2b2f58fcd23692d2f2054c68f6bfdd97c312260b7581e13df4d0542ebb5582fe
+cache:
+  directories:
+    - node_modules

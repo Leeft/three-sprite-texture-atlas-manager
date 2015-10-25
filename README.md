@@ -14,6 +14,8 @@ Splitting up a canvas in a texture atlas helps to maximise the use of GPU memory
 
 This library makes use of [Promises](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Promise), which means that to support IE11 in your WebGL application while making use of this library you'll need a provide a polyfill.
 
+Don't let the low version number fool you: I've been using this code as part of other projects for quite a while now and it works well. It's the extraction into a separate library and new build environment that have caused me to start with a low version number.
+
 ### Run-time requirements ###
 
 * three.js r73 or newer
@@ -111,9 +113,21 @@ function widthOfText(text) {
 
 ```
 
+### Documentation ###
+
+Please see [the API reference](docs/API.md) for the entire public interface.
+
+### TODO ###
+
+* More tests, particularly unit-tests for the internal helper modules.
+* Better usage documentation, right now it may not be obvious how to release and reallocate new nodes properly.
+* Fancier allocation algorithm, allowing to "defrag" and optimise the allocation? Would require a new method to tell the manager that the user is done adding the initial nodes, so it can start processing.
+
 ### License ###
 
 Copyright 2015 [Lianna Eeftinck](https://github.com/leeft/)
+
+NIT License
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 

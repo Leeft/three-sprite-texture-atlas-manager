@@ -1,3 +1,4 @@
+'use strict';
 // Load Gulp and all of our Gulp plugins
 const gulp = require('gulp');
 const $ = require('gulp-load-plugins')();
@@ -21,6 +22,14 @@ const config = manifest.babelBoilerplateOptions;
 const mainFile = manifest.main;
 const destinationFolder = path.dirname(mainFile);
 const exportFileName = path.basename(mainFile, path.extname(mainFile));
+
+// For gulp-jsdoc-to-markdown
+// https://github.com/jsdoc2md/gulp-jsdoc-to-markdown
+const fs = require("fs");
+const gutil = require("gulp-util");
+const gulpJsdoc2md = require("gulp-jsdoc-to-markdown");
+const rename = require("gulp-rename");
+const concat = require("gulp-concat");
 
 // Remove the built files
 gulp.task('clean', function(cb) {
@@ -58,7 +67,7 @@ createLintTask('lint-src', ['src/**/*.js']);
 createLintTask('lint-test', ['test/**/*.js']);
 
 // Build two versions of the library
-gulp.task('build', ['lint-src', 'clean'], function(done) {
+gulp.task('build', ['lint-src', 'clean', 'docs'], function(done) {
   esperanto.bundle({
     base: 'src',
     entry: config.entryFileName,
@@ -170,6 +179,36 @@ const otherWatchFiles = ['package.json', '**/.eslintrc', '.jscsrc'];
 gulp.task('watch', function() {
   const watchFiles = jsWatchFiles.concat(otherWatchFiles);
   gulp.watch(watchFiles, ['test']);
+});
+
+// One markdown file out per source file in
+//gulp.task( 'docs', function() {
+//  return gulp.src( 'src/**/*.js' )
+//    .pipe( gulpJsdoc2md({ template: fs.readFileSync( './template.hbs', 'utf8' ) }) )
+//    .on( 'error', function( err ) {
+//      gutil.log( gutil.colors.red('jsdoc2md failed'), err.message );
+//    })
+//    .pipe( rename( function( path ) {
+//      path.extname = ".md";
+//    }))
+//    .pipe( gulp.dest( 'docs' ) );
+//});
+
+// Multiple source files in, a single markdown file out
+gulp.task( 'docs', function() {
+  return gulp.src( 'src/**/*.js' )
+  .pipe( concat('API.md') )
+  .pipe( gulpJsdoc2md({
+    separators: true,
+    //'module-index-format': 'grouped',
+    //'global-index-format': 'grouped',
+    //'param-list-format': 'list',
+    //'property-list-format': 'list',
+    template: fs.readFileSync( './api.hbs', 'utf8' ) }) )
+  .on( 'error', function( err ) {
+    gutil.log( gutil.colors.red('jsdoc2md failed'), err.message );
+  })
+  .pipe( gulp.dest( 'docs' ) );
 });
 
 // An alias of test

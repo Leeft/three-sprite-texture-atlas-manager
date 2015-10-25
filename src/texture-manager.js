@@ -4,18 +4,16 @@ Build and destroy "nodes" in your texture atlas easily. It builds one or more {@
 @module texture-manager
 
 @example
-  // ES2015 modules
-  import TextureManager from 'three-sprite-texture-atlas-manager';
-  var textureManager = new TextureManager();
+// Import ES2015 modules
+import TextureManager from 'three-sprite-texture-atlas-manager';
+var textureManager = new TextureManager();
 
-@example
-  // node.js, requirejs
-  var TextureManager = require('three-sprite-texture-atlas-manager');
-  var textureManager = new TextureManager();
+// node.js or requirejs require()
+var TextureManager = require('three-sprite-texture-atlas-manager');
+var textureManager = new TextureManager();
 
-@example
-  // global
-  var textureManager = new window.threeSpriteAtlasTextureManager();
+// global namespace
+var textureManager = new window.threeSpriteAtlasTextureManager();
  *
  */
 
@@ -24,26 +22,44 @@ import Knapsack from './texture-manager/knapsack';
 /**
   * @constructor
   * @param {integer} [size=1024] Optional size for the textures. Must be a power of two.
+  * @example
+  * // We want 512x512 pixel textures
+  * var textureManager = new TextureManager( 512 );
+  * ...
+  * textureManager.allocateNode( ... );
   */
 class TextureManager {
   constructor( size ) {
     /**
-     * The size of the textures as validated after constructing the object.
-     * @member {integer} size
-     * @readonly
+     * The size of the textures as was validated when constructing the object.
+     * @namespace module:texture-manager~TextureManager#size
+     * @type {integer}
+     * @ignore
+     * @category readonly
      */
     this.size = ( ( typeof size === 'number' ) && /^(128|256|512|1024|2048|4096|8192|16384)$/.test( size ) ) ? size : 1024;
 
     /**
      * As the texture manager allocates nodes, it creates a new {@link module:texture-manager/knapsack|`Knapsack`} when it needs to provide space for nodes. This is an array with all the knapsacks which have been created.
-     * @member {Knapsack[]} knapsacks
+     * @namespace module:texture-manager~TextureManager#knapsacks
+     * @type {Knapsack[]}
      * @readonly
+     * @category readonly
+     * @example
+     * // Show the canvases in the DOM element with id="canvases"
+     * // (you'd normally do this from the browser console)
+     * textureManager.knapsacks.forEach( function( knapsack ) {
+     *   document.getElementById('canvases').appendChild( knapsack.canvas );
+     * });
      */
     this.knapsacks = [];
 
     /**
      * The debug property can be set to `true` after instantiating the object, which will make the {@link module:texture-manager/knapsack/node|`KnapsackNode`} class draw outlines as it allocates nodes. This can make it much more obvious what is going on, such as whether your text is properly sized and centered.
-     * @member {boolean} debug
+     * @namespace module:texture-manager~TextureManager#debug
+     * @type {boolean}
+     * @example
+     * textureManager.debug = true;
      */
     this.debug = false;
   }
@@ -52,7 +68,7 @@ class TextureManager {
    * Add a new knapsack to the texture manager.
    * @param {integer} size
    * @returns {Knapsack}
-   * @private
+   * @ignore
    */
   _addKnapsack( size ) {
     var knapsack = new Knapsack( this, size );
@@ -64,9 +80,10 @@ class TextureManager {
   }
 
   /**
-   * The size of the texture
+   * The actual used size of the texture.
    * @type {integer}
    * @readonly
+   * @category readonly
    */
   get textureSize () {
     return this.size;
@@ -77,6 +94,18 @@ class TextureManager {
    * @param {integer} width
    * @param {integer} height
    * @returns {external:Promise}
+   * @category allocation
+   * @example
+   * textureManager.allocateNode( 100, 20 ).then(
+   *   function( node ) {
+   *     // Do something with the node in this Promise, such as
+   *     // creating a sprite and adding it to the scene.
+   *   },
+   *   function( error ) {
+   *     // Promise was rejected
+   *     console.error( "Could not allocate node:", error );
+   *   }
+   * );
    */
   allocateNode( width, height ) {
     var self = this;
@@ -127,6 +156,9 @@ class TextureManager {
   /**
    * Release the given node.
    * @param {KnapsackNode} node
+   * @category allocation
+   * @example
+   * textureManager.release( node );
    */
   release( node ) {
     if ( node ) {
