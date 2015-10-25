@@ -117,6 +117,44 @@ function widthOfText(text) {
 
 Please see [the API reference](docs/API.md) for the entire public interface.
 
+### Development ###
+
+Install node.js (on Linux I recommend highly [nvm](https://github.com/creationix/nvm) for that) and check out the repository. Then:
+
+```bash
+$ npm install -g gulp
+$ cd three-sprite-texture-atlas-manager/
+$ npm install
+```
+
+Now your environment should be entirely set up, and the commands below should run just fine.
+
+To run the tests:
+
+```bash
+$ gulp test
+```
+
+For a test coverage report:
+
+```bash
+$ gulp covage
+```
+
+Build the documentation:
+
+```bash
+$ gulp docs
+```
+
+Build everything:
+
+```bash
+$ gulp build
+```
+
+Please note you'll currently see some warnings about outdated tools which are no longer being maintained while running `gulp`. I plan to tackle that issue at some point, it works fine though.
+
 ### TODO ###
 
 * More tests, particularly unit-tests for the internal helper modules.
