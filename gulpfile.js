@@ -1,4 +1,3 @@
-'use strict';
 // Load Gulp and all of our Gulp plugins
 const gulp = require('gulp');
 const $ = require('gulp-load-plugins')();

@@ -1,6 +1,6 @@
 {
   "name": "three-sprite-texture-atlas-manager",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "three.js Sprite Texture Atlas Manager",
   "main": "dist/three-sprite-texture-atlas-manager.js",
   "scripts": {
