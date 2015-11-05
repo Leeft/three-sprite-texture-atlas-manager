@@ -31,24 +31,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     }
 
     /**
-    Represents a single rectangular area "node" within a texture atlas canvas, which may have its own {@link external:Texture|`THREE.Texture`} with the UV coordinates managed for you. These nodes are created through {@link module:texture-manager#allocateNode|`allocateNode()`}.
-     The implementation is based on [http://www.blackpawn.com/texts/lightmaps/default.html](http://www.blackpawn.com/texts/lightmaps/default.html). Visit that page for a good impression of what we're achieving here.
-     See http://jsfiddle.net/Shiari/sbda72k9/ for a more complete and working example than the one below.
-     @module texture-manager/knapsack/node
-    @example
-    tetureManager.allocateNode( 100, 20 ).then(
-      function( node ) {
-        // Do something with the node in this Promise, like create
-        // a sprite.
-      },
-      function( error ) {
-        // Promise was rejected
-        console.error( "Could not allocate node:", error );
-      }
-    );
-    */
-
-    /**
      * Do not use this directly, it is managed for you.
      * @constructor
      * @param {Knapsack} - The {@link module:texture-manager/knapsack|`Knapsack`} this node is to become a part of.
@@ -157,11 +139,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
       this._texture = null;
     }
-
-    /**
-    Represents a single texture atlas with several sprites and its corresponding base {@link external:Texture|`THREE.Texture`}. You do not interact with this class directly, it is entirely managed for you by a {@link module:texture-manager|`TextureManager`} instance. Documented only to satisfy the curiosity of fellow developers stumbling upon this.
-     @module texture-manager/knapsack
-     */
 
     /**
       * @constructor
@@ -494,21 +471,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     }
 
     /**
-    Build and destroy "nodes" in your texture atlas easily. It builds one or more {@link module:texture-manager/knapsack|`Knapsack`} objects for you, each of which represent a separate square texture atlas with one or more sprite textures of a size defined by you.
-     @module texture-manager
-     @example
-    // Import ES2015 modules
-    import TextureManager from 'three-sprite-texture-atlas-manager';
-    var textureManager = new TextureManager();
-     // node.js or requirejs require()
-    var TextureManager = require('three-sprite-texture-atlas-manager');
-    var textureManager = new TextureManager();
-     // global namespace
-    var textureManager = new window.threeSpriteAtlasTextureManager();
-     *
-     */
-
-    /**
       * @constructor
       * @param {integer} [size=1024] Optional size for the textures. Must be a power of two.
       * @example
@@ -602,21 +564,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
        */
       this.debug = false;
     }
-
-    /**
-     */
-
-    /**
-    The main entry point for 'global' mode, to be used when you're not able to use `require();` or ES6 modules to load the functionality of this library. Include the library by loading the JavaScript directly, or combine it with your other code, and then do:
-     ```javascript
-    // Instantiate a new TextureManager with 512x512 textures
-    var textureManager = new window.threeSpriteAtlasTextureManager( 512 );
-    ```
-    * @namespace threeSpriteAtlasTextureManager
-    * @constructor
-    * @global
-    * @param {integer} [size=1024] Optional size for the textures. Must be a power of two.
-    */
 
     /**
      * Add a new knapsack to the texture manager.
@@ -732,8 +679,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     return TextureManager;
   })();
 
-  var three_sprite_texture_atlas_manager = TextureManager;
-
-  return three_sprite_texture_atlas_manager;
+  return TextureManager;
 });
-//# sourceMappingURL=three-sprite-texture-atlas-manager.js.map
+//# sourceMappingURL=three-sprite-texture-atlas-manager.umd.js.map

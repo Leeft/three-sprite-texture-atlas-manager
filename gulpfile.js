@@ -10,7 +10,7 @@ const isparta = require('isparta');
 const babelify = require('babelify');
 const watchify = require('watchify');
 const buffer = require('vinyl-buffer');
-const esperanto = require('esperanto');
+const rollup = require('rollup');
 const browserify = require('browserify');
 const runSequence = require('run-sequence');
 const source = require('vinyl-source-stream');
@@ -19,8 +19,10 @@ const source = require('vinyl-source-stream');
 const manifest = require('./package.json');
 const config = manifest.babelBoilerplateOptions;
 const mainFile = manifest.main;
+const es6File = manifest['jsnext:main'];
 const destinationFolder = path.dirname(mainFile);
-const exportFileName = path.basename(mainFile, path.extname(mainFile));
+const umdExportFileName = path.basename(mainFile, path.extname(mainFile));
+const es6ExportFileName = path.basename(es6File, path.extname(es6File));
 
 // For gulp-jsdoc-to-markdown
 // https://github.com/jsdoc2md/gulp-jsdoc-to-markdown
@@ -65,33 +67,42 @@ createLintTask('lint-src', ['src/**/*.js']);
 // Lint our test code
 createLintTask('lint-test', ['test/**/*.js']);
 
-// Build two versions of the library
+// Build N versions of the library
 gulp.task('build', ['lint-src', 'clean', 'docs'], function(done) {
-  esperanto.bundle({
-    base: 'src',
-    entry: config.entryFileName,
-    skip: ['polyfills'],
-  }).then(function(bundle) {
-    var res = bundle.toUmd({
-      // Don't worry about the fact that the source map is inlined at this step.
-      // `gulp-sourcemaps`, which comes next, will externalize them.
-      sourceMap: 'inline',
-      name: config.mainVarName
+  rollup.rollup({
+    entry: 'src/texture-manager.js',
+  }).then( function ( bundle ) {
+    // Create the umd files
+    var umd = bundle.generate({
+      format: 'umd',
+      exports: 'default',
+      moduleName: config.mainVarName,
+      globals: {
+        three: 'THREE',
+      },
     });
 
-    $.file(exportFileName + '.js', res.code, { src: true })
+    $.file( umdExportFileName+'.js', umd.code, { src: true } )
       .pipe($.plumber())
       .pipe($.sourcemaps.init({ loadMaps: true }))
       .pipe($.babel())
       .pipe($.sourcemaps.write('./'))
       .pipe(gulp.dest(destinationFolder))
       .pipe($.filter(['*', '!**/*.js.map']))
-      .pipe($.rename(exportFileName + '.min.js'))
+      .pipe($.rename(umdExportFileName + '.min.js'))
       .pipe($.sourcemaps.init({ loadMaps: true }))
       .pipe($.uglify())
       .pipe($.sourcemaps.write('./'))
       .pipe(gulp.dest(destinationFolder))
       .on('end', done);
+
+    // And create an .es6.js for easy inclusion in modern build pipelines
+    bundle.write({
+      dest: destinationFolder+'/'+es6ExportFileName+'.js',
+      format: 'es6',
+      exports: 'named',
+      moduleName: config.mainVarName,
+    });
   })
   .catch(done);
 });

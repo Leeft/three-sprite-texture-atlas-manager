@@ -1,12 +1,14 @@
 {
   "name": "three-sprite-texture-atlas-manager",
-  "version": "0.0.6",
+  "version": "0.1.0",
   "authors": [
     "Lianna Eeftinck <liannaee@gmail.com> (https://github.com/Leeft/)"
   ],
   "description": "three.js Sprite Texture Atlas Manager",
-  "main": "dist/three-sprite-texture-atlas-manager.js",
+  "main": "dist/three-sprite-texture-atlas-manager.umd.js",
+  "main:jsnext": "dist/three-sprite-texture-atlas-manager.es6.js",
   "moduleType": [
+    "umd",
     "es6",
     "globals",
     "node"

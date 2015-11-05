@@ -2,7 +2,7 @@
 * text eol=lf
 
 # binaries
-dist/three-sprite-texture-atlas-manager.min.js binary
+dist/three-sprite-texture-atlas-manager.umd.min.js binary
 *.map binary
 *.ai binary
 *.psd binary
