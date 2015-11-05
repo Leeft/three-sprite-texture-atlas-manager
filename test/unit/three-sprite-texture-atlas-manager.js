@@ -1,34 +1,5 @@
 import threeSpriteTextureAtlasManager from '../../src/three-sprite-texture-atlas-manager';
 
-global.THREE = require('three');
-
-// Mock 'document.createElement()' to return a fake canvas.
-// This is a bit more convenient rather than requiring both the canvas
-// and jsdom node modules to be installed as well.
-global.document = {
-  'createElement': function( name ) {
-    if ( name === 'canvas' ) {
-      return {
-        name: 'canvas',
-        width: null,
-        height: null,
-        getContext: function() {
-          return {
-            clearRect: function() {},
-            save: function() {},
-            restore: function() {},
-            beginPath: function() {},
-            rect: function() {},
-            clip: function() {},
-            translate: function() {}
-          };
-        },
-      };
-    }
-    throw new Error(`This simple mock doesn't know element type ${ name }`);
-  }
-};
-
 describe('basic class behaviour', () => {
   let tm;
 
