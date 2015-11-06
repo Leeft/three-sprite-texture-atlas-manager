@@ -25,13 +25,14 @@ Don't let the low version number fool you: I've been using this code as part of 
 
 A simple canvas-only online example as per the usage example below: http://jsfiddle.net/Shiari/sbda72k9/.
 
-Missing from the example is how you can free and reallocate nodes, e.g. if you're changing the text in them dynamically.
+Still missing from the example is how you can free and reallocate nodes, e.g. if you're changing the text in them dynamically. I'm working on an additional helper class for that.
 
 ### Usage ###
 
 ```javascript
 
 // We want textures of 1024x1024 pixels (always a power of two)
+// (this assumes "globals" mode ... for ES6 or node, import or require())
 var textureManager = new window.threeSpriteAtlasTextureManager(1024);
 // Make the sprite allocation code render some blue, purple and screen
 // borders in the nodes (this helps visualisation)
@@ -61,54 +62,54 @@ canvas.width = canvas.height = 1;
 var nodes = [];
 
 words.forEach(function (text) {
-    // Calculate the width of the text
-    var width = widthOfText(text) + xPadding;
-    // You'd base this height on your font size, may take some fiddling
-    var height = 120 + yPadding;
+  // Calculate the width of the text
+  var width = widthOfText(text) + xPadding;
+  // You'd base this height on your font size, may take some fiddling
+  var height = 120 + yPadding;
 
-    // Allocate a node for the text, this returns a promise
-    // which we're adding to the array. On success the
-    // promise resolves with a "node":
-    nodes.push(
-        textureManager.allocateNode( width, height ).then(
-            function (node) {
-                var context = node.clipContext();
-                context.font = fontStyle;
-                context.textAlign = 'center';
-                context.textBaseline = 'middle';
-                context.fillStyle = 'rgb( 0, 0, 0 )';
-                context.fillText(text, 0, yOffset);
-                node.restoreContext();
+  // Allocate a node for the text, this returns a promise
+  // which we're adding to the array. On success the
+  // promise resolves with a "node":
+  nodes.push(
+    textureManager.allocateNode( width, height ).then(
+      function (node) {
+        var context = node.clipContext();
+        context.font = fontStyle;
+        context.textAlign = 'center';
+        context.textBaseline = 'middle';
+        context.fillStyle = 'rgb( 0, 0, 0 )';
+        context.fillText(text, 0, yOffset);
+        node.restoreContext();
 
-                // If we were using WebGL for this example, here'd you'd be
-                // creating your sprite. node.texture will be a cloned texture
-                // ready to use, with its UV coordinates already set:
-                // var material = new THREE.SpriteMaterial({ map: node.texture });
-                // var sprite = new THREE.Sprite( material ) );
-                // scene.add( sprite );
-            },
-            function (error) {
-                console.error("Error allocating node:", error);
-            }
-        )
-    );
+        // If we were using WebGL for this example, here'd you'd be
+        // creating your sprite. node.texture will be a cloned texture
+        // ready to use, with its UV coordinates already set:
+        // var material = new THREE.SpriteMaterial({ map: node.texture });
+        // var sprite = new THREE.Sprite( material ) );
+        // scene.add( sprite );
+      },
+      function (error) {
+        console.error("Error allocating node:", error);
+      }
+    )
+  );
 });
 
 // When all the promises are resolved, we're ready to pull out the
 // canvases and put them in the DOM so that this fiddle shows them
 Promise.all(nodes).then(function () {
-    textureManager.knapsacks.forEach(function (knapsack) {
-        document.getElementById('canvases').appendChild( knapsack.canvas );
-    });
+  textureManager.knapsacks.forEach(function (knapsack) {
+    document.getElementById('canvases').appendChild( knapsack.canvas );
+  });
 });
 
 
 // Helper: determine the width required to render the given text. You'll want
 // to use the same (relevant) settings as you would when rendering the text
 function widthOfText(text) {
-    var context = canvas.getContext('2d');
-    context.font = fontStyle;
-    return (Math.floor(context.measureText(text).width));
+  var context = canvas.getContext('2d');
+  context.font = fontStyle;
+  return (Math.floor(context.measureText(text).width));
 }
 
 ```
@@ -138,7 +139,7 @@ $ gulp test
 For a test coverage report:
 
 ```bash
-$ gulp covage
+$ gulp coverage
 ```
 
 Build the documentation:
@@ -147,16 +148,16 @@ Build the documentation:
 $ gulp docs
 ```
 
-Build everything:
+Build the libraries in the `dist/` folder:
 
 ```bash
 $ gulp build
 ```
 
-Please note you'll currently see some warnings about outdated tools which are no longer being maintained while running `gulp`. I plan to tackle that issue at some point, it works fine though.
 
 ### TODO ###
 
+* Implement the Label helper class to make usage even easier.
 * More tests, particularly unit-tests for the internal helper modules.
 * Better usage documentation, right now it may not be obvious how to release and reallocate new nodes properly.
 * Fancier allocation algorithm, allowing to "defrag" and optimise the allocation? Would require a new method to tell the manager that the user is done adding the initial nodes, so it can start processing.

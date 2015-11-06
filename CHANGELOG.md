@@ -28,9 +28,9 @@
 
 ### [0.1.0](https://github.com/Leeft/three-sprite-texture-atlas-manager/releases/tag/v0.1.0)
 
-Build packager finally switched from Esperanto to Rollup, as Esperanto is end of life. That now enables a more advanced build:
+Build packager finally switched from Esperanto to Rollup, as Esperanto is end of life. This enables a slightly more advanced build:
 
-- ES6 module included as `dist/three-sprite-texture-atlas-manager.es6.js`.
+- New ES6 module library included as `dist/three-sprite-texture-atlas-manager.es6.js`.
 - UMD module locations moved to `dist/three-sprite-texture-atlas-manager.umd.js` and `three-sprite-texture-atlas-manager.umd.min.js`.
 
-If you were using this library already, you'll need to update the path if you were using the old one.
+If you were using this library before v0.1.0 and you specified the path manually somewhere, you'll have to change that.

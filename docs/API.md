@@ -6,11 +6,17 @@ Build and destroy "nodes" in your texture atlas easily. It builds one or more [`
 
 **Example**  
 ```js
-// Import ES2015 modules
+// From github:
+// $ npm install --save-dev leeft/three-sprite-texture-atlas-manager
+// from npm:
+// $ npm install --save-dev three-sprite-texture-atlas-manager
+//
+// Through ES2015 modules (highly recommended)
 import TextureManager from 'three-sprite-texture-atlas-manager';
 var textureManager = new TextureManager();
 
-// node.js or requirejs require()
+// node.js or CommonJS require()
+// then:
 var TextureManager = require('three-sprite-texture-atlas-manager');
 var textureManager = new TextureManager();
 
