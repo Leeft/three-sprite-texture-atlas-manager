@@ -6,25 +6,27 @@ module.exports = function() {
   // Mock 'document.createElement()' to return a fake canvas.
   // This is a bit more convenient rather than requiring both the canvas
   // and jsdom node modules to be installed as well.
+  const context = {
+    clearRect: function() {},
+    save: function() {},
+    restore: function() {},
+    beginPath: function() {},
+    rect: function() {},
+    clip: function() {},
+    measureText: function( text ) { return { width: text.length } },
+    translate: function() {},
+    strokeRect: function() {},
+  };
   global.document = {
     'createElement': function( name ) {
-      if ( name === 'canvas' ) {
+      if ( name === 'div' ) {
+        return;
+      } else if ( name === 'canvas' ) {
         return {
           name: 'canvas',
           width: null,
           height: null,
-          getContext: function() {
-            return {
-              clearRect: function() {},
-              save: function() {},
-              restore: function() {},
-              beginPath: function() {},
-              rect: function() {},
-              clip: function() {},
-              measureText: function( text ) { return { width: 12 * text.length } },
-              translate: function() {},
-            };
-          },
+          getContext: function() { return context; },
         };
       }
       throw new Error(`This simple mock doesn't know element type ${ name }`);
@@ -35,11 +37,13 @@ module.exports = function() {
     this.sandbox = global.sinon.sandbox.create();
     global.stub = this.sandbox.stub.bind(this.sandbox);
     global.spy = this.sandbox.spy.bind(this.sandbox);
+    global.mock = this.sandbox.mock.bind(this.sandbox);
   });
 
   afterEach( function() {
     delete global.stub;
     delete global.spy;
+    delete global.mock;
     this.sandbox.restore();
   });
 };
