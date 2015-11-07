@@ -19,27 +19,27 @@ const source = require('vinyl-source-stream');
 const manifest = require('./package.json');
 const config = manifest.babelBoilerplateOptions;
 const mainFile = manifest.main;
-const es6File = manifest['jsnext:main'];
+const es6File = manifest[ 'jsnext:main' ];
 const destinationFolder = path.dirname(mainFile);
 const umdExportFileName = path.basename(mainFile, path.extname(mainFile));
 const es6ExportFileName = path.basename(es6File, path.extname(es6File));
 
 // For gulp-jsdoc-to-markdown
 // https://github.com/jsdoc2md/gulp-jsdoc-to-markdown
-const fs = require("fs");
-const gutil = require("gulp-util");
-const gulpJsdoc2md = require("gulp-jsdoc-to-markdown");
-const rename = require("gulp-rename");
-const concat = require("gulp-concat");
+const fs = require('fs');
+const gutil = require('gulp-util');
+const gulpJsdoc2md = require('gulp-jsdoc-to-markdown');
+const rename = require('gulp-rename');
+const concat = require('gulp-concat');
 
 // Remove the built files
 gulp.task('clean', function(cb) {
-  del([destinationFolder], cb);
+  del([ destinationFolder ], cb);
 });
 
 // Remove our temporary files
 gulp.task('clean-tmp', function(cb) {
-  del(['tmp'], cb);
+  del([ 'tmp' ], cb);
 });
 
 // Send a notification when JSCS fails,
@@ -62,13 +62,13 @@ function createLintTask(taskName, files) {
 }
 
 // Lint our source code
-createLintTask('lint-src', ['src/**/*.js']);
+createLintTask('lint-src', [ 'src/**/*.js' ]);
 
 // Lint our test code
-createLintTask('lint-test', ['test/**/*.js']);
+createLintTask('lint-test', [ 'test/**/*.js' ]);
 
 // Build N versions of the library
-gulp.task('build', ['lint-src', 'clean', 'docs'], function(done) {
+gulp.task('build', [ 'lint-src', 'clean', 'docs' ], function(done) {
   rollup.rollup({
     entry: 'src/texture-manager.js',
   }).then( function ( bundle ) {
@@ -88,7 +88,7 @@ gulp.task('build', ['lint-src', 'clean', 'docs'], function(done) {
       .pipe($.babel())
       .pipe($.sourcemaps.write('./'))
       .pipe(gulp.dest(destinationFolder))
-      .pipe($.filter(['*', '!**/*.js.map']))
+      .pipe($.filter([ '*', '!**/*.js.map' ]))
       .pipe($.rename(umdExportFileName + '.min.js'))
       .pipe($.sourcemaps.init({ loadMaps: true }))
       .pipe($.uglify())
@@ -125,7 +125,7 @@ function getBundler() {
   // should individually load up pieces of our application.
   // We also include the browserify setup file.
   var testFiles = glob.sync('./test/unit/**/*');
-  var allFiles = ['./test/setup/browserify.js'].concat(testFiles);
+  var allFiles = [ './test/setup/browserify.js' ].concat(testFiles);
 
   // Create our bundler, passing in the arguments required for watchify
   var bundler = browserify(allFiles, watchify.args);
@@ -151,13 +151,13 @@ gulp.task('browserify', function() {
 });
 
 function test() {
-  return gulp.src(['test/setup/node.js', 'test/unit/**/*.js'], {read: false})
-    .pipe($.mocha({reporter: 'spec', globals: config.mochaGlobals}));
+  return gulp.src([ 'test/setup/node.js', 'test/unit/**/*.js' ], { read: false })
+    .pipe($.mocha({ reporter: 'spec', globals: config.mochaGlobals }));
 }
 
-gulp.task('coverage', ['lint-src', 'lint-test'], function(done) {
+gulp.task('coverage', [ 'lint-src', 'lint-test' ], function(done) {
   require('babel-core/register');
-  gulp.src(['src/**/*.js'])
+  gulp.src([ 'src/**/*.js' ])
     .pipe($.istanbul({ instrumenter: isparta.Instrumenter }))
     .pipe($.istanbul.hookRequire())
     .on('finish', function() {
@@ -168,7 +168,7 @@ gulp.task('coverage', ['lint-src', 'lint-test'], function(done) {
 });
 
 // Lint and run our tests
-gulp.task('test', ['lint-src', 'lint-test'], function() {
+gulp.task('test', [ 'lint-src', 'lint-test' ], function() {
   require('babel-core/register');
   return test();
 });
@@ -176,19 +176,19 @@ gulp.task('test', ['lint-src', 'lint-test'], function() {
 // Ensure that linting occurs before browserify runs. This prevents
 // the build from breaking due to poorly formatted code.
 gulp.task('build-in-sequence', function(callback) {
-  runSequence(['lint-src', 'lint-test'], 'browserify', callback);
+  runSequence([ 'lint-src', 'lint-test' ], 'browserify', callback);
 });
 
 // These are JS files that should be watched by Gulp. When running tests in the browser,
 // watchify is used instead, so these aren't included.
-const jsWatchFiles = ['src/**/*', 'test/**/*'];
+const jsWatchFiles = [ 'src/**/*', 'test/**/*' ];
 // These are files other than JS files which are to be watched. They are always watched.
-const otherWatchFiles = ['package.json', '**/.eslintrc', '.jscsrc'];
+const otherWatchFiles = [ 'package.json', '**/.eslintrc', '.jscsrc' ];
 
 // Run the headless unit tests as you make changes.
 gulp.task('watch', function() {
   const watchFiles = jsWatchFiles.concat(otherWatchFiles);
-  gulp.watch(watchFiles, ['test']);
+  gulp.watch(watchFiles, [ 'test' ]);
 });
 
 // One markdown file out per source file in
@@ -199,7 +199,7 @@ gulp.task('watch', function() {
 //      gutil.log( gutil.colors.red('jsdoc2md failed'), err.message );
 //    })
 //    .pipe( rename( function( path ) {
-//      path.extname = ".md";
+//      path.extname = '.md';
 //    }))
 //    .pipe( gulp.dest( 'docs' ) );
 //});
@@ -222,4 +222,4 @@ gulp.task( 'docs', function() {
 });
 
 // An alias of test
-gulp.task('default', ['test']);
+gulp.task('default', [ 'test' ]);
