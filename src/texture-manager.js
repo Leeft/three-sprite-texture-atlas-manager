@@ -151,11 +151,14 @@ class TextureManager {
         node = knapsack.allocateNode( width, height );
       }
 
-      if ( node === null || node === undefined ) {
-        reject( Error( `Could not allocate a node of size ${ width }x${ height }` ) );
-      } else {
-        resolve( node );
-      }
+      resolve( node );
+
+      //if ( node === null || node === undefined ) {
+      //  // This is not currently reachable, so left out
+      //  reject( Error( `Could not allocate a node of size ${ width }x${ height }` ) );
+      //} else {
+      //  resolve( node );
+      //}
     }));
   }
 
