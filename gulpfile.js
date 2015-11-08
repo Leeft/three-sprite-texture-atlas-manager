@@ -11,8 +11,6 @@ const babelify = require('babelify');
 const watchify = require('watchify');
 const buffer = require('vinyl-buffer');
 const rollup = require('rollup');
-const browserify = require('browserify');
-const runSequence = require('run-sequence');
 const source = require('vinyl-source-stream');
 
 // Gather the library data from `package.json`
@@ -34,12 +32,16 @@ const concat = require('gulp-concat');
 
 // Remove the built files
 gulp.task('clean', function(cb) {
-  del([ destinationFolder ], cb);
+  del([ destinationFolder ]).then( () => {
+    cb()
+  });
 });
 
 // Remove our temporary files
 gulp.task('clean-tmp', function(cb) {
-  del([ 'tmp' ], cb);
+  del([ 'tmp' ]).then( () => {
+    cb()
+  });
 });
 
 // Send a notification when JSCS fails,
@@ -120,36 +122,6 @@ function bundle(bundler) {
     .pipe($.livereload());
 }
 
-function getBundler() {
-  // Our browserify bundle is made up of our unit tests, which
-  // should individually load up pieces of our application.
-  // We also include the browserify setup file.
-  var testFiles = glob.sync('./test/unit/**/*');
-  var allFiles = [ './test/setup/browserify.js' ].concat(testFiles);
-
-  // Create our bundler, passing in the arguments required for watchify
-  var bundler = browserify(allFiles, watchify.args);
-
-  // Watch the bundler, and re-bundle it whenever files change
-  bundler = watchify(bundler);
-  bundler.on('update', function() {
-    bundle(bundler);
-  });
-
-  // Set up Babelify so that ES6 works in the tests
-  bundler.transform(babelify.configure({
-    sourceMapRelative: __dirname + '/src'
-  }));
-
-  return bundler;
-};
-
-// Build the unit test suite for running tests
-// in the browser
-gulp.task('browserify', function() {
-  return bundle(getBundler());
-});
-
 function test() {
   return gulp.src([ 'test/setup/node.js', 'test/unit/**/*.js' ], { read: false })
     .pipe($.mocha({ reporter: 'spec', globals: config.mochaGlobals }));
@@ -171,12 +143,6 @@ gulp.task('coverage', [ 'lint-src', 'lint-test' ], function(done) {
 gulp.task('test', [ 'lint-src', 'lint-test' ], function() {
   require('babel-core/register');
   return test();
-});
-
-// Ensure that linting occurs before browserify runs. This prevents
-// the build from breaking due to poorly formatted code.
-gulp.task('build-in-sequence', function(callback) {
-  runSequence([ 'lint-src', 'lint-test' ], 'browserify', callback);
 });
 
 // These are JS files that should be watched by Gulp. When running tests in the browser,
