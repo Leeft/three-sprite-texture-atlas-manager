@@ -32,14 +32,14 @@ const concat = require('gulp-concat');
 
 // Remove the built files
 gulp.task('clean', function(cb) {
-  del([ destinationFolder ]).then( () => {
+  del([ destinationFolder ]).then( function() {
     cb()
   });
 });
 
 // Remove our temporary files
 gulp.task('clean-tmp', function(cb) {
-  del([ 'tmp' ]).then( () => {
+  del([ 'tmp' ]).then( function() {
     cb()
   });
 });
