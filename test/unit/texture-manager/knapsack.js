@@ -155,7 +155,7 @@ describe( 'TextureManager → Knapsack → Node:', () => {
     rootNode.knapsack.textureManager.debug = true;
     rootNode.claim();
     expect( rootNode ).to.have.a.property('imageID').to.match( /^[a-z0-9\-]+$/i );
-    expect( strokeRectSpy ).to.have.called.once;
+    expect( strokeRectSpy ).to.have.been.called.once;
     expect( strokeRectSpy ).to.have.been.calledWithExactly( rootNode.rectangle.left + 0.5, rootNode.rectangle.top + 0.5, rootNode.width - 1, rootNode.height - 1 );
   });
 });

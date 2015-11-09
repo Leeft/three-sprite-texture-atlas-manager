@@ -34,3 +34,9 @@ Build packager finally switched from Esperanto to Rollup, as Esperanto is end of
 - UMD module locations moved to `dist/three-sprite-texture-atlas-manager.umd.js` and `three-sprite-texture-atlas-manager.umd.min.js`.
 
 If you were using this library before v0.1.0 and you specified the path manually somewhere, you'll have to change that.
+
+### [0.1.1](https://github.com/Leeft/three-sprite-texture-atlas-manager/releases/tag/v0.1.1)
+
+- Tests expanded
+- New methods: `allocate()`, and `allocateASync()`/`solveASync()`. The first is a simpler synchronous version of `allocateNode` which returns its result instantly; use of the latter two allow the layout engine to batch process the allocations, and that enables the knapsack algorithm to optimise the allocation. See [the API reference](docs/API.md) for the interface.
+- Internals reworked a bit to make the new methods share as much code as possible.

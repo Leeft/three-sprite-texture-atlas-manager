@@ -9,11 +9,11 @@ Build and destroy "nodes" in your texture atlas easily. It builds one or more {@
 // from npm:
 // $ npm install --save-dev three-sprite-texture-atlas-manager
 //
-// Through ES2015 modules (highly recommended)
+// Through ES2015 (ES6) modules (highly recommended):
 import TextureManager from 'three-sprite-texture-atlas-manager';
 var textureManager = new TextureManager();
 
-// node.js or CommonJS require()
+// Node.js or CommonJS require():
 // then:
 var TextureManager = require('three-sprite-texture-atlas-manager');
 var textureManager = new TextureManager();
@@ -96,7 +96,28 @@ class TextureManager {
   }
 
   /**
-   * Allocate a texture atlas node for a sprite image of `width` by `height` pixels.
+   * Allocate a texture atlas node for a sprite image of `width` by `height` pixels. Unlike allocateNode, it does not return a {external:Promise} and it works synchronously.
+   * @param {integer} width
+   * @param {integer} height
+   * @returns {KnapsackNode}
+   * @category allocation
+   * @throws {Error} The given with and height must fit in the texture.
+   * @example
+   * let node = textureManager.allocate( 100, 20 );
+   */
+  allocate( width, height ) {
+    let node = null;
+
+    // Prevent allocating knapsacks when there's no chance to fit the node
+    // FIXME TODO: try a bigger texture size if it doesn't fit?
+    this._validateSize( width, height );
+    return this._allocate( width, height );
+  }
+
+  /**
+   * {external:Promise} based version of {@link allocate}.
+   *
+   * This method will require you to use a {external:Promise} polyfill if you want to support IE11 or older, as that browser doesn't support promises natively.
    * @param {integer} width
    * @param {integer} height
    * @returns {external:Promise}
@@ -114,52 +135,157 @@ class TextureManager {
    * );
    */
   allocateNode( width, height ) {
-    var self = this;
+    return new Promise( ( resolve, reject ) => {
+      try {
+        // Prevent allocating knapsacks when there's no chance to fit the node
+        // FIXME TODO: try a bigger texture size if it doesn't fit?
+        this._validateSize( width, height );
+        resolve( this._allocate( width, height ) );
+      } catch ( error ) {
+        reject( error );
+      };
+    });
+  }
 
-    return ( new Promise( function( resolve, reject ) {
-      let node;
+  /**
+   * Asynchronously allocate a texture atlas node for a sprite image of `width` by `height` pixels. Returns a result through resolving the promise. The asynchronous approach will potentially allow for better optimisation of packing nodes in the texture space.
+   *
+   * When done adding nodes, you should call {@link solveASync}. Your queued promises will then be settled. But note that the {external:Promise} will still be rejected straight away if the given width or height don't fit.
+   * @param {integer} width
+   * @param {integer} height
+   * @returns {external:Promise}
+   * @category allocation
+   * @example
+   * // First prepare all your node allocations:
+   * [ 1, 2, 3 ].forEach( function() {
+   *   textureManager.allocateASync( 100, 20 ).then(
+   *     function( node ) {
+   *       // Do something with the node in this Promise, such as
+   *       // creating a sprite and adding it to the scene.
+   *       // Note: this promise won't succesfully settle until
+   *       // after you also called solveASync!
+   *     },
+   *     function( error ) {
+   *       // Promise was rejected
+   *       console.error( "Could not allocate node:", error );
+   *     }
+   *   );
+   * });
+   * // Then resolve all the outstanding allocations:
+   * textureManager.solveASync().then( function( result ) {
+   *   console.log( `${ result.length } allocations have resolved` );
+   * });
+   */
+  allocateASync( width, height ) {
+    if ( ! Array.isArray( this._queue ) ) {
+      this._queue = [];
+    }
 
-      // Prevent allocating knapsacks when there's no chance to fit the node
-      // FIXME TODO: try a bigger texture size if it doesn't fit?
-      if ( width > self.textureSize ) {
-        reject( Error( `A width of ${ width } is too large for these textures` ) );
-        return;
+    let queueEntry;
+
+    const promise = new Promise( ( resolve, reject ) => {
+      try {
+        // Prevent allocating knapsacks when there's no chance to fit the node
+        // FIXME TODO: try a bigger texture size if it doesn't fit?
+        this._validateSize( width, height );
+        // Queue our resolution, which will be settled with .solveASync()
+        queueEntry = {
+          resolve: resolve,
+          reject: reject,
+          width: width,
+          height: height,
+        };
       }
+      catch ( error ) {
+        reject( error );
+      };
+    });
 
-      if ( height > self.textureSize ) {
-        reject( Error( `A height of ${ height } is too large for these textures` ) );
-        return;
-      }
+    if ( queueEntry ) {
+      queueEntry.promise = promise;
+      this._queue.push( queueEntry );
+    }
 
-      if ( ! self.knapsacks.length ) {
-        self._addKnapsack( self.size );
-      }
+    return promise;
+  }
 
-      // First try to get a node from the existing knapsacks
-      self.knapsacks.forEach( function( knapsack ) {
-        if ( node === null || node === undefined ) {
-          node = knapsack.allocateNode( width, height );
-        }
-      });
+  /**
+   * Trigger resolution of any outstanding node allocation promises, i.e. those that have been created with {@link allocateASync}. Call this when you've added nodes, or their promises will not settle.
+   *
+   * This is by design, as postponing of the node allocation makes it possible for the texture manager to optimise packing of the texture space in the most efficient manner possible.
+   * @returns {external:Promise}
+   * @category allocation
+   * @throws {Error} You're trying to resolve a queue which hasn't been set up. Call {@link allocateASync} at least once before calling this.
+   * @example
+   * textureManager.solveASync().then( function( count ) {
+   *   console.log( `${ count } node allocations have been resolved` );
+   * });
+   */
+  solveASync() {
+    if ( ! Array.isArray( this._queue ) ) {
+      throw new Error( `You're trying to resolve a queue which hasn't been set up. Call allocateASync before using this.` );
+    }
 
-      // If we didn't get a node here, but it should fit in a knapsack
-      // of the same size, so we can allocate a new knapsack
-      if ( node === null && ( width <= self.textureSize ) )
-      {
-        // Didn't get a node yet but it *should* fit, so make a new texture atlas with the same size
-        let knapsack = self._addKnapsack( self.textureSize );
+    const promises = [];
+
+    this._queue.forEach( entry => {
+      const { promise: promise, resolve: resolve, reject: reject, width: width, height: height } = entry;
+      const node = this._allocate( width, height );
+      resolve( node );
+      promises.push( promise );
+    });
+
+    this._queue = [];
+
+    return Promise.all( promises );
+  }
+
+  /**
+   * Low level helper to assert whether the given width and height will fit.
+   * @param {integer} width
+   * @param {integer} height
+   * @category allocation
+   * @throws {Error} Width of <number> is too large for these textures.
+   * @throws {Error} Height of <number> is too large for these textures.
+   * @private
+   * @ignore
+   */
+  _validateSize( width, height ) {
+    if ( width > this.textureSize ) {
+      throw new Error( `Width of ${ width } is too large for these textures` );
+    }
+
+    if ( height > this.textureSize ) {
+      throw new Error( `Height of ${ height } is too large for these textures` );
+    }
+  }
+
+  /**
+   * Low level helper to allocate a texture atlas node for a sprite image of `width` by `height` pixels.
+   * @param {integer} width
+   * @param {integer} height
+   * @returns {KnapsackNode}
+   * @category allocation
+   * @private
+   * @ignore
+   */
+  _allocate( width, height ) {
+    let node = null;
+
+    // First try to get a node from the existing knapsacks
+    this.knapsacks.forEach( knapsack => {
+      if ( node === null || node === undefined ) {
         node = knapsack.allocateNode( width, height );
       }
+    });
 
-      resolve( node );
+    // Didn't get a node yet but it *should* fit, so make a new texture atlas with the same size
+    if ( node === null ) {
+      let knapsack = this._addKnapsack( this.textureSize );
+      node = knapsack.allocateNode( width, height );
+    }
 
-      //if ( node === null || node === undefined ) {
-      //  // This is not currently reachable, so left out
-      //  reject( Error( `Could not allocate a node of size ${ width }x${ height }` ) );
-      //} else {
-      //  resolve( node );
-      //}
-    }));
+    return node;
   }
 
   /**
@@ -177,6 +303,3 @@ class TextureManager {
 }
 
 export default TextureManager;
-
-/**
- */

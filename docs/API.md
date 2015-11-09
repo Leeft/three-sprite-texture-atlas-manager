@@ -11,11 +11,11 @@ Build and destroy "nodes" in your texture atlas easily. It builds one or more [`
 // from npm:
 // $ npm install --save-dev three-sprite-texture-atlas-manager
 //
-// Through ES2015 modules (highly recommended)
+// Through ES2015 (ES6) modules (highly recommended):
 import TextureManager from 'three-sprite-texture-atlas-manager';
 var textureManager = new TextureManager();
 
-// node.js or CommonJS require()
+// Node.js or CommonJS require():
 // then:
 var TextureManager = require('three-sprite-texture-atlas-manager');
 var textureManager = new TextureManager();
@@ -31,7 +31,10 @@ var textureManager = new window.threeSpriteAtlasTextureManager();
   * [new TextureManager([size])](#new_module_texture-manager..TextureManager_new)
   * [.debug](#module_texture-manager..TextureManager+debug) : <code>object</code>
   * _allocation_
+    * [.allocate(width, height)](#module_texture-manager..TextureManager+allocate) ⇒ <code>KnapsackNode</code>
     * [.allocateNode(width, height)](#module_texture-manager..TextureManager+allocateNode) ⇒ <code>[Promise](#external_Promise)</code>
+    * [.allocateASync(width, height)](#module_texture-manager..TextureManager+allocateASync) ⇒ <code>[Promise](#external_Promise)</code>
+    * [.solveASync()](#module_texture-manager..TextureManager+solveASync) ⇒ <code>[Promise](#external_Promise)</code>
     * [.release(node)](#module_texture-manager..TextureManager+release)
   * _readonly_
     * [.textureSize](#module_texture-manager..TextureManager+textureSize) : <code>integer</code>
@@ -69,9 +72,34 @@ textureManager.debug = true;
 
 -
 
+<a name="module_texture-manager..TextureManager+allocate"></a>
+#### textureManager.allocate(width, height) ⇒ <code>KnapsackNode</code>
+Allocate a texture atlas node for a sprite image of `width` by `height` pixels. Unlike allocateNode, it does not return a {external:Promise} and it works synchronously.
+
+**Kind**: instance method of <code>[TextureManager](#module_texture-manager..TextureManager)</code>  
+**Category**: allocation  
+**Throws**:
+
+- <code>Error</code> The given with and height must fit in the texture.
+
+
+| Param | Type |
+| --- | --- |
+| width | <code>integer</code> | 
+| height | <code>integer</code> | 
+
+**Example**  
+```js
+let node = textureManager.allocate( 100, 20 );
+```
+
+-
+
 <a name="module_texture-manager..TextureManager+allocateNode"></a>
 #### textureManager.allocateNode(width, height) ⇒ <code>[Promise](#external_Promise)</code>
-Allocate a texture atlas node for a sprite image of `width` by `height` pixels.
+{external:Promise} based version of [allocate](allocate).
+
+This method will require you to use a {external:Promise} polyfill if you want to support IE11 or older, as that browser doesn't support promises natively.
 
 **Kind**: instance method of <code>[TextureManager](#module_texture-manager..TextureManager)</code>  
 **Category**: allocation  
@@ -93,6 +121,66 @@ textureManager.allocateNode( 100, 20 ).then(
     console.error( "Could not allocate node:", error );
   }
 );
+```
+
+-
+
+<a name="module_texture-manager..TextureManager+allocateASync"></a>
+#### textureManager.allocateASync(width, height) ⇒ <code>[Promise](#external_Promise)</code>
+Asynchronously allocate a texture atlas node for a sprite image of `width` by `height` pixels. Returns a result through resolving the promise. The asynchronous approach will potentially allow for better optimisation of packing nodes in the texture space.
+
+When done adding nodes, you should call [solveASync](solveASync). Your queued promises will then be settled. But note that the {external:Promise} will still be rejected straight away if the given width or height don't fit.
+
+**Kind**: instance method of <code>[TextureManager](#module_texture-manager..TextureManager)</code>  
+**Category**: allocation  
+
+| Param | Type |
+| --- | --- |
+| width | <code>integer</code> | 
+| height | <code>integer</code> | 
+
+**Example**  
+```js
+// First prepare all your node allocations:
+[ 1, 2, 3 ].forEach( function() {
+  textureManager.allocateASync( 100, 20 ).then(
+    function( node ) {
+      // Do something with the node in this Promise, such as
+      // creating a sprite and adding it to the scene.
+      // Note: this promise won't succesfully settle until
+      // after you also called solveASync!
+    },
+    function( error ) {
+      // Promise was rejected
+      console.error( "Could not allocate node:", error );
+    }
+  );
+});
+// Then resolve all the outstanding allocations:
+textureManager.solveASync().then( function( result ) {
+  console.log( `${ result.length } allocations have resolved` );
+});
+```
+
+-
+
+<a name="module_texture-manager..TextureManager+solveASync"></a>
+#### textureManager.solveASync() ⇒ <code>[Promise](#external_Promise)</code>
+Trigger resolution of any outstanding node allocation promises, i.e. those that have been created with [allocateASync](allocateASync). Call this when you've added nodes, or their promises will not settle.
+
+This is by design, as postponing of the node allocation makes it possible for the texture manager to optimise packing of the texture space in the most efficient manner possible.
+
+**Kind**: instance method of <code>[TextureManager](#module_texture-manager..TextureManager)</code>  
+**Category**: allocation  
+**Throws**:
+
+- <code>Error</code> You're trying to resolve a queue which hasn't been set up. Call [allocateASync](allocateASync) at least once before calling this.
+
+**Example**  
+```js
+textureManager.solveASync().then( function( count ) {
+  console.log( `${ count } node allocations have been resolved` );
+});
 ```
 
 -
