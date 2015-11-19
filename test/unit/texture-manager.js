@@ -91,6 +91,10 @@ describe( 'TextureManager: multiple knapsack allocation', () => {
   const tm = new TextureManager( 256 );
   let one, two, three, four, five, six, seven, eight;
 
+  it( 'is safe to call release without a node', () => {
+    expect( tm.release() ).to.equal.undefined;
+  });
+
   it( 'has no knapsacks to start with', () => {
     expect( tm.knapsacks.length ).to.equal( 0 );
   });
