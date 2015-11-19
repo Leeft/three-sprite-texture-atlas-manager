@@ -16,6 +16,9 @@ module.exports = function() {
     measureText: function( text ) { return { width: text.length } },
     translate: function() {},
     strokeRect: function() {},
+    scale: function() {},
+    fillText: function() {},
+    strokeText: function() {},
   };
   global.document = {
     'createElement': function( name ) {
