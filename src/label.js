@@ -35,9 +35,10 @@ class Label {
     if ( this._textureManager && tm !== this._textureManager ) {
       throw new Error( 'Create new label instead of resetting the texture-manager' );
     }
-    if ( ! ( tm instanceof TextureManager ) ) {
-      throw new TypeError('No texture-manager instance supplied');
-    }
+    // FIXME: This check doesn't work well in practice
+    //if ( ! ( tm instanceof TextureManager ) ) {
+    //  throw new TypeError('No texture-manager instance supplied');
+    //}
     this._textureManager = tm;
   }
 
