@@ -2,6 +2,7 @@ import TextureManager from './texture-manager';
 
 const DEFAULTS = {
   fontFamily: `'Segoe UI', 'Lucida Grande', 'Tahoma', 'Calibri', 'Roboto', sans-serif`,
+  scale: 1.0, // Overall scale, this affects all the other values as well
   textHeight: 64, // in px
   textVerticalOffset: 8.5, // number of 'scale' units the text is shifted by
   textAlign: 'center',
@@ -11,7 +12,6 @@ const DEFAULTS = {
   paddingX: 6, // number of 'scale' units to add to the width
   paddingY: 36.5, // number of 'scale' units to add to the height
   outline: 2.4,
-  scale: 1.0,
   opacity: 0.75,
   visible: true,
 };
@@ -280,13 +280,11 @@ class Label {
     const context = canvas.getContext('2d');
     context.font         = this.fontStyle;
     context.textBaseline = this.textBaseline;
-    context.lineWidth    = this.outline;
-
-    let width = context.measureText( this.text ).width + this.paddingX;
+    context.lineWidth    = this.outline * this.scale;
 
     return [
-      Math.floor( width * this.scale ),
-      Math.floor( ( this.textHeight + this.paddingY ) * this.scale )
+      Math.floor( context.measureText( this.text ).width + ( this.paddingX * this.scale ) ),
+      Math.floor( ( this.textHeight + this.paddingY ) * this.scale ),
     ];
   }
 
@@ -298,11 +296,11 @@ class Label {
     context.fillStyle = this.fillStyle;
     context.lineCap = 'round';
     context.lineJoin = 'round';
-    context.lineWidth = this.outline;
+    context.lineWidth = this.outline * this.scale;
     context.miterLimit = 2;
-    context.fillText( this.text, 0, this.textVerticalOffset );
+    context.fillText( this.text, 0, this.textVerticalOffset * this.scale );
     context.strokeStyle = this.strokeStyle;
-    context.strokeText( this.text, 0, this.textVerticalOffset );
+    context.strokeText( this.text, 0, this.textVerticalOffset * this.scale );
   }
 }
 

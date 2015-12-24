@@ -491,13 +491,13 @@ describe( 'Label: measureSprite() and drawSprite()', () => {
 
     label.text = 'Nine wide'; // 9 chars, mocked to 9 pixels
     expect( label.measureSprite() ).to.deep.equal([
-      Math.floor( ( 9 + label.paddingX ) * label.scale ),
+      Math.floor( 9 + ( label.paddingX * label.scale ) ),
       Math.floor( ( label.textHeight + label.paddingY ) * label.scale )
     ]);
 
     label.text = 'Much wider than before'; // 22 chars, mocked to 22 pixels
     expect( label.measureSprite() ).to.deep.equal([
-      Math.floor( ( 22 + label.paddingX ) * label.scale ),
+      Math.floor( 22 + ( label.paddingX * label.scale ) ),
       Math.floor( ( label.textHeight + label.paddingY ) * label.scale )
     ]);
   });
@@ -516,8 +516,8 @@ describe( 'Label: measureSprite() and drawSprite()', () => {
     // XXX: Should we test that certain properties have been set?
     // That might be too much implementation detail though
     expect( fakeContext.scale ).to.have.been.calledWithExactly( label.scale, label.scale );
-    expect( fakeContext.fillText ).to.have.been.calledWithExactly( label.text, 0, label.textVerticalOffset );
-    expect( fakeContext.strokeText ).to.have.been.calledWithExactly( label.text, 0, label.textVerticalOffset );
+    expect( fakeContext.fillText ).to.have.been.calledWithExactly( label.text, 0, label.textVerticalOffset * label.scale );
+    expect( fakeContext.strokeText ).to.have.been.calledWithExactly( label.text, 0, label.textVerticalOffset * label.scale );
   });
 });
 
