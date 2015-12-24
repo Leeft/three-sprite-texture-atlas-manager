@@ -515,7 +515,7 @@ describe( 'Label: measureSprite() and drawSprite()', () => {
 
     // XXX: Should we test that certain properties have been set?
     // That might be too much implementation detail though
-    expect( fakeContext.scale ).to.have.been.calledWithExactly( label.scale, label.scale );
+    expect( fakeContext.scale ).to.not.have.been.called;
     expect( fakeContext.fillText ).to.have.been.calledWithExactly( label.text, 0, label.textVerticalOffset * label.scale );
     expect( fakeContext.strokeText ).to.have.been.calledWithExactly( label.text, 0, label.textVerticalOffset * label.scale );
   });

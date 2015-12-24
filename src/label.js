@@ -3,6 +3,7 @@ import TextureManager from './texture-manager';
 const DEFAULTS = {
   fontFamily: `'Segoe UI', 'Lucida Grande', 'Tahoma', 'Calibri', 'Roboto', sans-serif`,
   scale: 1.0, // Overall scale, this affects all the other values as well
+  bold: false,
   textHeight: 64, // in px
   textVerticalOffset: 8.5, // number of 'scale' units the text is shifted by
   textAlign: 'center',
@@ -205,17 +206,18 @@ class Label {
 
   set visible ( visible ) {
     if ( this.hasSprite ) {
-      //console.log( 'hasSprite, setting visible to', visible );
       this.sprite.visible = visible;
-    } else {
-      //console.log( 'do not have a sprite' );
     }
     this._defaultVisible = visible;
   }
 
 
   get fontStyle () {
-    return `${ (this.textHeight * this.scale).toFixed(0) }px ${ this.fontFamily }`;
+    if ( this.bold ) {
+      return `Bold ${ (this.textHeight * this.scale).toFixed(0) }px ${ this.fontFamily }`;
+    } else {
+      return `${ (this.textHeight * this.scale).toFixed(0) }px ${ this.fontFamily }`;
+    }
   }
 
 
@@ -279,9 +281,7 @@ class Label {
     canvas.height = 1;
 
     const context = canvas.getContext('2d');
-    context.font         = this.fontStyle;
-    context.textBaseline = this.textBaseline;
-    context.lineWidth    = this.outline * this.scale;
+    context.font  = this.fontStyle;
 
     return [
       Math.floor( context.measureText( this.text ).width + ( this.paddingX * this.scale ) ),
@@ -290,7 +290,6 @@ class Label {
   }
 
   drawSprite ( context, node ) {
-    context.scale( this.scale, this.scale );
     context.font = this.fontStyle;
     context.textAlign = this.textAlign;
     context.textBaseline = this.textBaseline;
