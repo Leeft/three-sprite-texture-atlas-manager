@@ -28,17 +28,17 @@ var textureManager = new window.threeSpriteAtlasTextureManager();
 **Kind**: inner class of <code>[texture-manager](#module_texture-manager)</code>  
 
 * [~TextureManager](#module_texture-manager..TextureManager)
-  * [new TextureManager([size])](#new_module_texture-manager..TextureManager_new)
-  * [.debug](#module_texture-manager..TextureManager+debug) : <code>object</code>
-  * _allocation_
-    * [.allocate(width, height)](#module_texture-manager..TextureManager+allocate) ⇒ <code>KnapsackNode</code>
-    * [.allocateNode(width, height)](#module_texture-manager..TextureManager+allocateNode) ⇒ <code>[Promise](#external_Promise)</code>
-    * [.allocateASync(width, height)](#module_texture-manager..TextureManager+allocateASync) ⇒ <code>[Promise](#external_Promise)</code>
-    * [.solveASync()](#module_texture-manager..TextureManager+solveASync) ⇒ <code>[Promise](#external_Promise)</code>
-    * [.release(node)](#module_texture-manager..TextureManager+release)
-  * _readonly_
-    * [.textureSize](#module_texture-manager..TextureManager+textureSize) : <code>integer</code>
-    * [.knapsacks](#module_texture-manager..TextureManager+knapsacks) : <code>object</code>
+    * [new TextureManager([size])](#new_module_texture-manager..TextureManager_new)
+    * [.debug](#module_texture-manager..TextureManager+debug) : <code>object</code>
+    * _allocation_
+        * [.allocate(width, height)](#module_texture-manager..TextureManager+allocate) ⇒ <code>KnapsackNode</code>
+        * [.allocateNode(width, height)](#module_texture-manager..TextureManager+allocateNode) ⇒ <code>[Promise](#external_Promise)</code>
+        * [.allocateASync(width, height)](#module_texture-manager..TextureManager+allocateASync) ⇒ <code>[Promise](#external_Promise)</code>
+        * [.solveASync()](#module_texture-manager..TextureManager+solveASync) ⇒ <code>[Promise](#external_Promise)</code>
+        * [.release(node)](#module_texture-manager..TextureManager+release)
+    * _readonly_
+        * [.textureSize](#module_texture-manager..TextureManager+textureSize) : <code>integer</code>
+        * [.knapsacks](#module_texture-manager..TextureManager+knapsacks) : <code>object</code>
 
 
 -
@@ -260,21 +260,21 @@ Do not use this directly, it is managed for you.
 **Kind**: inner class of <code>[texture-manager/knapsack/node](#module_texture-manager/knapsack/node)</code>  
 
 * [~KnapsackNode](#module_texture-manager/knapsack/node..KnapsackNode)
-  * [new KnapsackNode(knapsack)](#new_module_texture-manager/knapsack/node..KnapsackNode_new)
-  * _allocation_
-    * [.release()](#module_texture-manager/knapsack/node..KnapsackNode+release)
-  * _drawing_
-    * [.clear()](#module_texture-manager/knapsack/node..KnapsackNode+clear)
-    * [.clipContext()](#module_texture-manager/knapsack/node..KnapsackNode+clipContext) ⇒ <code>CanvasRenderingContext2D</code>
-    * [.restoreContext()](#module_texture-manager/knapsack/node..KnapsackNode+restoreContext)
-  * _information_
-    * [.width](#module_texture-manager/knapsack/node..KnapsackNode+width) : <code>integer</code>
-    * [.height](#module_texture-manager/knapsack/node..KnapsackNode+height) : <code>integer</code>
-    * [.uvCoordinates()](#module_texture-manager/knapsack/node..KnapsackNode+uvCoordinates) ⇒ <code>Array</code>
-  * _provider_
-    * [.canvas](#module_texture-manager/knapsack/node..KnapsackNode+canvas) : <code>[canvas](#external_canvas)</code>
-    * [.context](#module_texture-manager/knapsack/node..KnapsackNode+context) : <code>[CanvasRenderingContext2D](#external_CanvasRenderingContext2D)</code>
-    * [.texture](#module_texture-manager/knapsack/node..KnapsackNode+texture) : <code>[Texture](#external_Texture)</code>
+    * [new KnapsackNode(knapsack)](#new_module_texture-manager/knapsack/node..KnapsackNode_new)
+    * _allocation_
+        * [.release()](#module_texture-manager/knapsack/node..KnapsackNode+release)
+    * _drawing_
+        * [.clear()](#module_texture-manager/knapsack/node..KnapsackNode+clear)
+        * [.clipContext()](#module_texture-manager/knapsack/node..KnapsackNode+clipContext) ⇒ <code>CanvasRenderingContext2D</code>
+        * [.restoreContext()](#module_texture-manager/knapsack/node..KnapsackNode+restoreContext)
+    * _information_
+        * [.width](#module_texture-manager/knapsack/node..KnapsackNode+width) : <code>integer</code>
+        * [.height](#module_texture-manager/knapsack/node..KnapsackNode+height) : <code>integer</code>
+        * [.uvCoordinates()](#module_texture-manager/knapsack/node..KnapsackNode+uvCoordinates) ⇒ <code>Array</code>
+    * _provider_
+        * [.canvas](#module_texture-manager/knapsack/node..KnapsackNode+canvas) : <code>[canvas](#external_canvas)</code>
+        * [.context](#module_texture-manager/knapsack/node..KnapsackNode+context) : <code>[CanvasRenderingContext2D](#external_CanvasRenderingContext2D)</code>
+        * [.texture](#module_texture-manager/knapsack/node..KnapsackNode+texture) : <code>[Texture](#external_Texture)</code>
 
 
 -
