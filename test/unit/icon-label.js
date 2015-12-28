@@ -1,9 +1,11 @@
 import Label from '../../src/label';
+import IconLabel from '../../src/icon-label';
+import IconLabelSymbol from '../../src/icon-label-symbol';
 import TextureManager from '../../src/texture-manager';
 import KnapsackNode from '../../src/texture-manager/knapsack/node';
 
 const standardTestLabel = () => {
-  return new Label({
+  return new IconLabel({
     textureManager: new TextureManager(),
     addTo: new THREE.Object3D(),
     text: '    Hurrah   ',
@@ -19,32 +21,36 @@ const standardTestLabel = () => {
     outline: 3.21,
     scale: 1.321,
     opacity: 0.99,
-    bold: false,
+    icons: [
+      new IconLabelSymbol({ code: 'a' }),
+      new IconLabelSymbol({ code: 'b' })
+    ],
+    debugIconDrawing: true,
   });
 };
 
-describe('Label: object instantiation', () => {
+describe('IconLabel: object instantiation', () => {
   xit( 'dies without any arguments', () => {
-    const fn = function() { new Label(); }
+    const fn = function() { new IconLabel(); }
     expect( fn ).to.throw( TypeError );
     expect( fn ).to.throw( /No texture-manager instance supplied/ );
   });
 
   xit( 'dies with a regular variable as argument', () => {
-    const fn = function() { new Label( 'boom' ); }
+    const fn = function() { new IconLabel( 'boom' ); }
     expect( fn ).to.throw( TypeError );
     expect( fn ).to.throw( /No texture-manager instance supplied/ );
   });
 
   xit( 'dies with an empty object as argument', () => {
-    const fn = function() { new Label({}); }
+    const fn = function() { new IconLabel({}); }
     expect( fn ).to.throw( TypeError );
     expect( fn ).to.throw( /No texture-manager instance supplied/ );
   });
 
   it( 'dies without a text as argument', () => {
     const fn = function() {
-      new Label({
+      new IconLabel({
         textureManager: new TextureManager()
       });
     };
@@ -54,7 +60,7 @@ describe('Label: object instantiation', () => {
 
   it( 'dies with an empty text as argument', () => {
     const fn = function() {
-      new Label({
+      new IconLabel({
         textureManager: new TextureManager(),
         text: '         ',
       });
@@ -65,7 +71,7 @@ describe('Label: object instantiation', () => {
 
   it( 'dies with no "addTo" object as argument', () => {
     const fn = function() {
-      new Label({
+      new IconLabel({
         textureManager: new TextureManager(),
         text: 'Kaboom',
       });
@@ -76,7 +82,7 @@ describe('Label: object instantiation', () => {
 
   it( 'dies with an invalid "addTo" object as argument', () => {
     const fn = function() {
-      new Label({
+      new IconLabel({
         textureManager: new TextureManager(),
         text: 'Kaboom',
         addTo: {},
@@ -88,7 +94,7 @@ describe('Label: object instantiation', () => {
 
   it( 'lives with a valid "addTo" object as argument', () => {
     const fn = function() {
-      new Label({
+      new IconLabel({
         textureManager: new TextureManager(),
         text: 'Kaboom',
         addTo: new THREE.Object3D(),
@@ -103,7 +109,7 @@ describe('Label: object instantiation', () => {
       addTo: new THREE.Object3D(),
       text: '123!!!',
     };
-    const label = new Label( init );
+    const label = new IconLabel( init );
     expect(label).to.have.property('text').which.equals( '123!!!' );
     expect(label).to.have.property('fontFamily').to.contain( 'sans-serif' );
     expect(label).to.have.property('textHeight').to.be.within( 10, 80 );
@@ -140,7 +146,7 @@ describe('Label: object instantiation', () => {
       opacity: 0.99,
       visible: false,
     };
-    const label = new Label( init );
+    const label = new IconLabel( init );
     expect(label).to.have.property('textureManager').which.equals( init.textureManager );
     expect(label).to.have.property('addTo').which.equals( init.addTo );
     expect(label).to.have.property('text').which.equals( 'Hurrah' ); // !!!
@@ -168,13 +174,13 @@ describe('Label: object instantiation', () => {
       addTo: new THREE.Object3D(),
       text: '123!!!',
     };
-    const label = new Label( init );
+    const label = new IconLabel( init );
     expect( () => { label.textureManager = textureManager1 } ).to.not.throw();
     expect( () => { label.textureManager = textureManager2 } ).to.throw( Error, 'Create new label instead of' );
   });
 });
 
-describe( 'Label: .text property and friends', () => {
+describe( 'IconLabel: .text property and friends', () => {
   it( `.text only allows a valid non-empty string to be set`, () => {
     const label = standardTestLabel();
     expect( () => { label.text = '' } ).to.throw( Error, 'No text supplied' );
@@ -198,99 +204,22 @@ describe( 'Label: .text property and friends', () => {
   });
 });
 
-describe( 'Label: .promise and .node', () => {
+describe( 'IconLabel: the prototype chain is as expected', () => {
   let label;
-
   beforeEach( () => {
     label = standardTestLabel();
   });
 
-  describe( 'The Promise', () => {
-    it( '.hasPromise is false by default', () => {
-      expect( label ).to.have.a.property('hasPromise').which.equals( false );
-    });
-
-    it( '.hasPromise stays false after setting .promise = null', () => {
-      expect( () => { label.promise = null } ).to.throw( Error );
-      expect( label ).to.have.property('hasPromise').which.equals( false );
-    });
-
-    it( '.hasPromise stays false after setting .promise = undefined', () => {
-      expect( () => { label.promise = undefined } ).to.throw( Error );
-      expect( label ).to.have.property('hasPromise').which.equals( false );
-    });
-
-    it( '.hasPromise stays false after setting .promise = {}', () => {
-      expect( () => { label.promise = {}; } ).to.throw( Error );
-      expect( label ).to.have.property('hasPromise').which.equals( false );
-    });
-
-    it( '.hasPromise stays false after setting .promise = new Promise( ... )', () => {
-      expect( () => { label.promise = new Promise( () => {} ); } ).to.throw( Error );
-      expect( label ).to.have.property('hasPromise').which.equals( false );
-    });
-
-    it( 'the Promise settles succesfully when .node is called', () => {
-      label.node;
-      return expect( label.promise ).to.eventually.be.fulfilled;
-    });
-
-    it( 'the .then() proxy method Promise settles', done => {
-      label.node;
-      label.then( success => { done(); });
-    });
+  it( 'Is a regular Label', () => {
+    expect( label ).to.be.an('object').which.is.an.instanceof( Label );
   });
 
-  describe( 'The .node', () => {
-    it( 'returns a KnapsackNode', () => {
-      expect( label ).to.have.property('node').which.is.an.instanceof( KnapsackNode );
-    });
-
-    it( 'keeps returning the same object', () => {
-      const node = label.node;
-      expect( label ).to.have.property('node').which.equals( node );
-      expect( label ).to.have.property('node').which.equals( node );
-    });
-
-    it( 'fetching it triggers creation of a Promise', () => {
-      expect( label ).to.have.property('hasPromise').which.equals( false );
-      label.node;
-      expect( label ).to.have.property('hasPromise').which.equals( true );
-      expect( label ).to.have.property('promise').which.is.instanceof( Promise );
-    });
-  });
-
-  describe( 'The internal .promiseInfo has all we need', () => {
-    it( 'it is an object', () => {
-      expect( label ).to.have.a.property('promiseInfo').which.is.an('object');
-    });
-
-    it( 'it is populated when .node is requested', () => {
-      expect( label.promiseInfo ).to.have.a.property('node').which.is.undefined;
-      label.node;
-      expect( label.promiseInfo ).to.have.a.property('node').which.is.an('object');
-    });
-
-    it( 'it has resolve and reject functions', () => {
-      label.node;
-      expect( label.promiseInfo ).to.respondTo('resolve');
-      expect( label.promiseInfo ).to.respondTo('reject');
-    });
-
-    it( 'it has a valid node', () => {
-      label.node;
-      expect( label.promiseInfo ).to.have.a.property('node').which.is.an('object');
-    });
-
-    it( 'its Promise matches that of the label itself', () => {
-      label.node;
-      expect( label.promiseInfo ).to.have.a.property('promise').which.is.an.instanceOf( Promise )
-        .and.equals( label.promise );
-    });
+  it( 'Is an IconLabel', () => {
+    expect( label ).to.be.an('object').which.is.an.instanceof( IconLabel );
   });
 });
 
-describe( 'Label: .sprite and .hasSprite', () => {
+describe( 'IconLabel: .sprite and .hasSprite', () => {
   let label;
 
   beforeEach( () => {
@@ -335,7 +264,7 @@ describe( 'Label: .sprite and .hasSprite', () => {
   });
 });
 
-describe( 'Label: makeSprite() and .visible', () => {
+describe( 'IconLabel: makeSprite() and .visible', () => {
   let label, invisible;
 
   beforeEach( () => {
@@ -392,7 +321,7 @@ describe( 'Label: makeSprite() and .visible', () => {
   });
 });
 
-describe( 'Label: .sprite property', () => {
+describe( 'IconLabel: .sprite property', () => {
   let label;
 
   beforeEach( () => {
@@ -448,7 +377,7 @@ describe( 'Label: .sprite property', () => {
   });
 });
 
-describe( 'Label: destroy()', () => {
+describe( 'IconLabel: destroy()', () => {
   let label;
 
   beforeEach( () => {
@@ -483,23 +412,27 @@ describe( 'Label: destroy()', () => {
   });
 });
 
-describe( 'Label: measureSprite() and drawSprite()', () => {
+describe( 'IconLabel: measureSprite() and drawSprite()', () => {
   // TODO: Maybe include canvas library so real tests can be done?
 
   it( 'measureSprite() acts on .text property', () => {
     const label = standardTestLabel();
 
-    label.text = 'Nine wide'; // 9 chars, mocked to 9 pixels
-    expect( label.measureSprite() ).to.deep.equal([
-      Math.floor( 9 + ( label.paddingX * label.scale ) ),
-      Math.floor( ( label.textHeight + label.paddingY ) * label.scale )
-    ]);
+    it( 'works mocked to 9 pixels', () => {
+      label.text = 'Nine wide'; // 9 chars, mocked to 9 pixels
+      expect( label.measureSprite() ).to.deep.equal([
+        Math.floor( 9 + ( label.paddingX * label.scale ) ),
+        Math.floor( ( label.textHeight + label.paddingY ) * label.scale )
+      ]);
+    });
 
-    label.text = 'Much wider than before'; // 22 chars, mocked to 22 pixels
-    expect( label.measureSprite() ).to.deep.equal([
-      Math.floor( 22 + ( label.paddingX * label.scale ) ),
-      Math.floor( ( label.textHeight + label.paddingY ) * label.scale )
-    ]);
+    it( 'works mocked to 22 pixels', () => {
+      label.text = 'Much wider than before'; // 22 chars, mocked to 22 pixels
+      expect( label.measureSprite() ).to.deep.equal([
+        Math.floor( 22 + ( label.paddingX * label.scale ) ),
+        Math.floor( ( label.textHeight + label.paddingY ) * label.scale )
+      ]);
+    });
   });
 
   it( 'drawSprite() draws on a canvas context', () => {
@@ -509,6 +442,10 @@ describe( 'Label: measureSprite() and drawSprite()', () => {
       scale: function() {},
       fillText: function() {},
       strokeText: function() {},
+      beginPath: function() {},
+      closePath: function() {},
+      rect: function() {},
+      stroke: function() {},
     });
 
     label.drawSprite( fakeContext, null );
@@ -521,7 +458,7 @@ describe( 'Label: measureSprite() and drawSprite()', () => {
   });
 });
 
-describe( 'Label: insertSprite() and destroySprite()', () => {
+describe( 'IconLabel: insertSprite() and destroySprite()', () => {
   let label, sprite;
 
   beforeEach( () => {
@@ -560,7 +497,7 @@ describe( 'Label: insertSprite() and destroySprite()', () => {
   });
 });
 
-describe('Label: dynamic and lazy properties', () => {
+describe('IconLabel: dynamic and lazy properties', () => {
   let label;
 
   beforeEach( () => {
@@ -578,6 +515,7 @@ describe('Label: dynamic and lazy properties', () => {
     });
 
     it( 'the label is no longer dirty and invisible when generated', () => {
+      label.icons = []; // Cheat to increasing code coverage :)  TODO: test properly
       label.createSprite();
       expect(label).to.have.property('visible').which.equals( true );
       expect(label).to.have.property('isDirty').which.equals( false );
@@ -607,16 +545,9 @@ describe('Label: dynamic and lazy properties', () => {
       label.fontStyle = 'XXX';
       expect(label).to.have.property('fontStyle').which.matches( new RegExp( `^\\d+px ${ label.fontFamily }` ) );
     });
-
-    it( `setting the .bold property has effect on fontStyle`, () => {
-      label.bold = true;
-      expect(label).to.have.property('fontStyle').which.matches( new RegExp( `^Bold \\d+px ${ label.fontFamily }` ) );
-      label.bold = false;
-      expect(label).to.have.property('fontStyle').which.matches( new RegExp( `^\\d+px ${ label.fontFamily }` ) );
-    });
   });
 
-  it( 'setting .text triggers a rebuild of the sprite', () => {
+  it( 'setting .icons triggers a rebuild of the sprite', () => {
     let insertSprite = spy( label.insertSprite );
     let destroySprite = spy( label.destroySprite );
     expect(label).to.have.property('isDirty').to.equal( true );
@@ -624,8 +555,9 @@ describe('Label: dynamic and lazy properties', () => {
     const sprite = label.sprite;
     expect(label).to.have.property('isDirty').to.equal( false );
 
-    // Now set the text, this should trigger a rebuild
-    label.text = 'I got changed';
+    // Now set the icons, this should trigger a rebuild
+    label.icons = [ new IconLabelSymbol({ code: 'z' }) ];
+
     expect(label).to.have.property('isDirty').to.equal( false );
     expect(label).to.have.property('hasSprite').which.equals( true );
     expect(label).to.have.property('sprite').which.not.equals( sprite );

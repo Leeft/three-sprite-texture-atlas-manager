@@ -11,6 +11,7 @@ module.exports = function() {
     save: function() {},
     restore: function() {},
     beginPath: function() {},
+    closePath: function() {},
     rect: function() {},
     clip: function() {},
     measureText: function( text ) { return { width: text.length } },
@@ -19,6 +20,7 @@ module.exports = function() {
     scale: function() {},
     fillText: function() {},
     strokeText: function() {},
+    stroke: function() {},
   };
   global.document = {
     'createElement': function( name ) {
