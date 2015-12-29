@@ -23,17 +23,11 @@ class IconLabel extends Label {
   }
 
   set icons ( array ) {
-    const hadSprite = this.hasSprite;
-
-    if ( hadSprite ) {
-      this.destroySprite();
-    }
-
     this._icons = array;
     this.isDirty = true;
 
-    if ( hadSprite ) {
-      this.sprite;
+    if ( this.hasSprite ) {
+      this.buildSprite();
     }
   }
 

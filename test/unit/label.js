@@ -5,7 +5,6 @@ import KnapsackNode from '../../src/texture-manager/knapsack/node';
 const standardTestLabel = () => {
   return new Label({
     textureManager: new TextureManager(),
-    addTo: new THREE.Object3D(),
     text: '    Hurrah   ',
     fontFamily: 'Arial',
     textHeight: 60,
@@ -24,22 +23,19 @@ const standardTestLabel = () => {
 };
 
 describe('Label: object instantiation', () => {
-  xit( 'dies without any arguments', () => {
+  it( 'dies without any arguments', () => {
     const fn = function() { new Label(); }
-    expect( fn ).to.throw( TypeError );
-    expect( fn ).to.throw( /No texture-manager instance supplied/ );
+    expect( fn ).to.throw( Error );
   });
 
-  xit( 'dies with a regular variable as argument', () => {
+  it( 'dies with a regular variable as argument', () => {
     const fn = function() { new Label( 'boom' ); }
-    expect( fn ).to.throw( TypeError );
-    expect( fn ).to.throw( /No texture-manager instance supplied/ );
+    expect( fn ).to.throw( Error );
   });
 
-  xit( 'dies with an empty object as argument', () => {
+  it( 'dies with an empty object as argument', () => {
     const fn = function() { new Label({}); }
-    expect( fn ).to.throw( TypeError );
-    expect( fn ).to.throw( /No texture-manager instance supplied/ );
+    expect( fn ).to.throw( Error );
   });
 
   it( 'dies without a text as argument', () => {
@@ -63,35 +59,11 @@ describe('Label: object instantiation', () => {
     expect( fn ).to.throw( /No text supplied for the label/ );
   });
 
-  it( 'dies with no "addTo" object as argument', () => {
+  it( 'lives with valid arguments', () => {
     const fn = function() {
       new Label({
         textureManager: new TextureManager(),
         text: 'Kaboom',
-      });
-    };
-    expect( fn ).to.throw( TypeError );
-    expect( fn ).to.throw( /No valid addTo object supplied/ );
-  });
-
-  it( 'dies with an invalid "addTo" object as argument', () => {
-    const fn = function() {
-      new Label({
-        textureManager: new TextureManager(),
-        text: 'Kaboom',
-        addTo: {},
-      });
-    };
-    expect( fn ).to.throw( TypeError );
-    expect( fn ).to.throw( /No valid addTo object supplied/ );
-  });
-
-  it( 'lives with a valid "addTo" object as argument', () => {
-    const fn = function() {
-      new Label({
-        textureManager: new TextureManager(),
-        text: 'Kaboom',
-        addTo: new THREE.Object3D(),
       });
     };
     expect( fn ).to.not.throw( TypeError );
@@ -117,7 +89,6 @@ describe('Label: object instantiation', () => {
     expect(label).to.have.property('outline').to.be.within( 0, 10 );
     expect(label).to.have.property('scale').to.equal( 1.0 );
     expect(label).to.have.property('opacity').to.be.within( 0.5, 1.0 );
-    expect(label).to.have.property('visible').to.equal( false ); // No sprite yet, so not visible
     expect(label).to.have.property('isDirty').to.equal( true );
   });
 
@@ -138,7 +109,6 @@ describe('Label: object instantiation', () => {
       outline: 3.21,
       scale: 1.321,
       opacity: 0.99,
-      visible: false,
     };
     const label = new Label( init );
     expect(label).to.have.property('textureManager').which.equals( init.textureManager );
@@ -156,7 +126,6 @@ describe('Label: object instantiation', () => {
     expect(label).to.have.property('outline').which.equals( init.outline );
     expect(label).to.have.property('scale').which.equals( init.scale );
     expect(label).to.have.property('opacity').which.equals( init.opacity );
-    expect(label).to.have.property('visible').which.equals( false ); // No sprite yet, never true
     expect(label).to.have.property('isDirty').which.equals( true ); // No sprite yet, so always dirty
   });
 
@@ -198,95 +167,36 @@ describe( 'Label: .text property and friends', () => {
   });
 });
 
-describe( 'Label: .promise and .node', () => {
+describe( 'Label: .node', () => {
   let label;
 
   beforeEach( () => {
     label = standardTestLabel();
   });
 
-  describe( 'The Promise', () => {
-    it( '.hasPromise is false by default', () => {
-      expect( label ).to.have.a.property('hasPromise').which.equals( false );
-    });
-
-    it( '.hasPromise stays false after setting .promise = null', () => {
-      expect( () => { label.promise = null } ).to.throw( Error );
-      expect( label ).to.have.property('hasPromise').which.equals( false );
-    });
-
-    it( '.hasPromise stays false after setting .promise = undefined', () => {
-      expect( () => { label.promise = undefined } ).to.throw( Error );
-      expect( label ).to.have.property('hasPromise').which.equals( false );
-    });
-
-    it( '.hasPromise stays false after setting .promise = {}', () => {
-      expect( () => { label.promise = {}; } ).to.throw( Error );
-      expect( label ).to.have.property('hasPromise').which.equals( false );
-    });
-
-    it( '.hasPromise stays false after setting .promise = new Promise( ... )', () => {
-      expect( () => { label.promise = new Promise( () => {} ); } ).to.throw( Error );
-      expect( label ).to.have.property('hasPromise').which.equals( false );
-    });
-
-    it( 'the Promise settles succesfully when .node is called', () => {
-      label.node;
-      return expect( label.promise ).to.eventually.be.fulfilled;
-    });
-
-    it( 'the .then() proxy method Promise settles', done => {
-      label.node;
-      label.then( success => { done(); });
-    });
+  it( 'returns a KnapsackNode', () => {
+    expect( label ).to.have.property('node').which.is.an.instanceof( KnapsackNode );
   });
 
-  describe( 'The .node', () => {
-    it( 'returns a KnapsackNode', () => {
-      expect( label ).to.have.property('node').which.is.an.instanceof( KnapsackNode );
-    });
-
-    it( 'keeps returning the same object', () => {
-      const node = label.node;
-      expect( label ).to.have.property('node').which.equals( node );
-      expect( label ).to.have.property('node').which.equals( node );
-    });
-
-    it( 'fetching it triggers creation of a Promise', () => {
-      expect( label ).to.have.property('hasPromise').which.equals( false );
-      label.node;
-      expect( label ).to.have.property('hasPromise').which.equals( true );
-      expect( label ).to.have.property('promise').which.is.instanceof( Promise );
-    });
+  it( 'keeps returning the same object', () => {
+    const node = label.node;
+    expect( label ).to.have.property('node').which.equals( node );
+    expect( label ).to.have.property('node').which.equals( node );
   });
 
-  describe( 'The internal .promiseInfo has all we need', () => {
-    it( 'it is an object', () => {
-      expect( label ).to.have.a.property('promiseInfo').which.is.an('object');
-    });
+  it( 'is reallocated when needed', () => {
+    const firstNode = label.node;
+    label.text = 'A much longer string';
+    const secondNode = label.node;
+    expect( secondNode ).to.not.equal( firstNode );
+  });
 
-    it( 'it is populated when .node is requested', () => {
-      expect( label.promiseInfo ).to.have.a.property('node').which.is.undefined;
-      label.node;
-      expect( label.promiseInfo ).to.have.a.property('node').which.is.an('object');
-    });
-
-    it( 'it has resolve and reject functions', () => {
-      label.node;
-      expect( label.promiseInfo ).to.respondTo('resolve');
-      expect( label.promiseInfo ).to.respondTo('reject');
-    });
-
-    it( 'it has a valid node', () => {
-      label.node;
-      expect( label.promiseInfo ).to.have.a.property('node').which.is.an('object');
-    });
-
-    it( 'its Promise matches that of the label itself', () => {
-      label.node;
-      expect( label.promiseInfo ).to.have.a.property('promise').which.is.an.instanceOf( Promise )
-        .and.equals( label.promise );
-    });
+  it( 'a shorter text may reuse the node', () => {
+    label.text = 'Plenty of characters here';
+    const firstNode = label.node;
+    label.text = 'Plenty of characters her';
+    const secondNode = label.node;
+    expect( secondNode ).to.equal( firstNode );
   });
 });
 
@@ -297,30 +207,6 @@ describe( 'Label: .sprite and .hasSprite', () => {
     label = standardTestLabel();
   });
 
-  describe( 'setting the .sprite property', () => {
-    it( `can't be set to null`, () => {
-      expect( () => { label.sprite = null } ).to.throw( TypeError, 'Not a valid sprite' );
-    });
-
-    it( `can't be set to undefined`, () => {
-      expect( () => { label.sprite = undefined } ).to.throw( TypeError, 'Not a valid sprite' );
-    });
-
-    it( `can't be set to an object`, () => {
-      expect( () => { label.sprite = {} } ).to.throw( TypeError, 'Not a valid sprite' );
-    });
-
-    it( 'can be set to a THREE.Sprite', () => {
-      expect( () => { label.sprite = new THREE.Sprite(); } ).to.not.throw();
-    });
-
-    it( 'setting THREE.Sprite switches .hasSprite to true', () => {
-      expect( label ).to.have.a.property('hasSprite').which.is.false;
-      expect( () => { label.sprite = new THREE.Sprite(); } ).to.not.throw();
-      expect( label ).to.have.a.property('hasSprite').which.is.true;
-    });
-  });
-
   describe( 'getting the .sprite property', () => {
     it( `returns a valid sprite`, () => {
       expect( label ).to.have.a.property('sprite').which.is.an('object')
@@ -328,67 +214,10 @@ describe( 'Label: .sprite and .hasSprite', () => {
     });
 
     it( `continues to return the same sprite`, () => {
-      const sprite = label.createSprite();
+      const sprite = label.buildSprite();
       expect( label ).to.have.a.property('sprite').which.is.an('object')
         .and.equals( sprite );
     });
-  });
-});
-
-describe( 'Label: makeSprite() and .visible', () => {
-  let label, invisible;
-
-  beforeEach( () => {
-    label     = standardTestLabel();
-    invisible = standardTestLabel();
-    invisible.visible = false;
-  });
-
-  describe( '→ .defaultVisible = true', () => {
-    it( '.makeSprite() returns a sprite with .visible === true', () => {
-      const sprite = label.createSprite();
-      expect(sprite).to.be.an('object').which.is.instanceof( THREE.Sprite );
-      expect(sprite).to.have.a.property('visible').which.is.true;
-    });
-
-    it( '.visible is false by default', () => {
-      expect(label).to.have.property('visible').which.equals( false );
-    });
-
-    it( '.visible becomes true after setting .sprite', () => {
-      label.createSprite();
-      expect(label).to.have.property('visible').which.equals( true );
-      expect(label.sprite).to.have.property('visible').which.equals( true );
-    });
-  });
-
-  describe( '→ .defaultVisible = false', () => {
-    it( '.makeSprite() returns a sprite with .visible === false', () => {
-      const sprite = invisible.createSprite();
-      expect(sprite).to.be.an('object').which.is.instanceof( THREE.Sprite );
-      expect(sprite).to.have.a.property('visible').which.is.false;
-    });
-
-    it( '.visible is false by default', () => {
-      expect(invisible).to.have.property('visible').which.equals( false );
-    });
-
-    it( '.visible stays false after setting .sprite', () => {
-      invisible.sprite = invisible.createSprite();
-      expect(invisible).to.have.property('visible').which.equals( false );
-    });
-  });
-
-  it( '→ sprite also changes visibility as label.visible is set', () => {
-    const label = standardTestLabel();
-    const sprite = label.createSprite();
-    expect(sprite).to.have.a.property('visible').which.equals( true );
-    label.visible = false;
-    expect(sprite).to.have.a.property('visible').which.equals( false );
-    label.visible = true;
-    expect(sprite).to.have.a.property('visible').which.equals( true );
-    //invisible.visible = false;
-    //expect(sprite).to.have.a.property('visible').which.is.false;
   });
 });
 
@@ -404,21 +233,6 @@ describe( 'Label: .sprite property', () => {
     expect(label).to.have.property('hasSprite').which.equals( false );
   });
 
-  it( '.sprite throws error and .hasSprite stays false on invalid sprite: null', () => {
-    expect( () => { label.sprite = null } ).to.throw( TypeError, 'Not a valid sprite' );
-    expect( label ).to.have.property('hasSprite').which.equals( false );
-  });
-
-  it( '.sprite throws error and .hasSprite stays false on invalid sprite: undefined', () => {
-    expect( () => { label.sprite = undefined } ).to.throw( TypeError, 'Not a valid sprite' );
-    expect( label ).to.have.property('hasSprite').which.equals( false );
-  });
-
-  it( '.sprite throws error and .hasSprite stays false on invalid sprite: {}', () => {
-    expect( () => { label.sprite = {}; } ).to.throw( TypeError, 'Not a valid sprite' );
-    expect( label ).to.have.property('hasSprite').which.equals( false );
-  });
-
   it( '.hasSprite becomes true after setting .sprite', () => {
     expect( label ).to.have.property('hasSprite').which.equals( false );
     label.sprite;
@@ -427,10 +241,13 @@ describe( 'Label: .sprite property', () => {
 
   it( 'clips and restores the canvas context when drawing', () => {
     const node = label.node;
+
     const clipSpy = spy( node, 'clipContext' );
     const drawSpy = spy( label, 'drawSprite' );
     const restoreSpy = spy( node, 'restoreContext' );
-    label.sprite;
+
+    label.redraw();
+
     expect( clipSpy ).to.have.been.called.once;
     expect( drawSpy ).to.have.been.called.once;
     expect( restoreSpy ).to.have.been.called.once;
@@ -438,10 +255,13 @@ describe( 'Label: .sprite property', () => {
 
   it( 'restores the canvas context when an error is thrown while drawing', () => {
     const node = label.node;
+
     const stubbed = stub( label, 'drawSprite', () => { throw new Error( 'kaboom' ) } );
     const clipSpy = spy( node, 'clipContext' );
     const restoreSpy = spy( node, 'restoreContext' );
-    expect( () => { label.sprite } ).to.throw( Error, 'kaboom' );
+
+    expect( () => { label.redraw() } ).to.throw( Error, 'kaboom' );
+
     expect( clipSpy ).to.have.been.called.once;
     expect( stubbed ).to.have.been.called.once;
     expect( restoreSpy ).to.have.been.called.once;
@@ -455,31 +275,34 @@ describe( 'Label: destroy()', () => {
     label = standardTestLabel();
   });
 
-  it( 'calls .destroySprite()', () => {
-    const destroySpy = spy( label, 'destroySprite' );
-    label.createSprite();
+  it( 'removes the sprite from the parent and clean up after itself', () => {
+    const obj = new THREE.Object3D();
+    const sprite = label.sprite;
+    obj.add( sprite );
+    expect( sprite.parent ).to.equal( obj );
     label.destroy();
-    label.destroy();
-    expect( destroySpy ).to.have.been.called.twice;
+    expect( sprite.parent ).to.equal( null );
+    expect( label._sprite ).to.equal( null );
+    expect( label._node ).to.equal( null );
+    expect( label._material ).to.equal( null );
   });
 
-  it( 'is safe to call destroy without a node in .promiseInfo', () => {
-    label.createSprite();
-    delete label.promiseInfo.node;
+  it( 'is safe to call destroy without a .sprite', () => {
+    label.buildSprite();
+    label._sprite = null;
     label.destroy();
   });
 
+  it( 'is safe to call destroy without a .node', () => {
+    label.buildSprite();
+    label._node = null;
+    label.destroy();
+  });
 
-  it( '.then() returns a promise, and .destroy() works', done => {
-    const releaseSpy = spy( label.textureManager, 'release' );
-    label.node;
-    label.node; // FIXME needs to be a separate test
-    label.then( node => {
-      label.destroy();
-      label.destroy(); // A node can only be released once:
-      expect( releaseSpy ).to.have.been.called.once;
-      done();
-    });
+  it( 'is safe to call destroy without a .material', () => {
+    label.buildSprite();
+    label._material = null;
+    label.destroy();
   });
 });
 
@@ -491,14 +314,14 @@ describe( 'Label: measureSprite() and drawSprite()', () => {
 
     label.text = 'Nine wide'; // 9 chars, mocked to 9 pixels
     expect( label.measureSprite() ).to.deep.equal([
-      Math.floor( 9 + ( label.paddingX * label.scale ) ),
-      Math.floor( ( label.textHeight + label.paddingY ) * label.scale )
+      Math.ceil( 9 + ( label.paddingX * label.scale ) ),
+      Math.ceil( ( label.textHeight + label.paddingY ) * label.scale )
     ]);
 
     label.text = 'Much wider than before'; // 22 chars, mocked to 22 pixels
     expect( label.measureSprite() ).to.deep.equal([
-      Math.floor( 22 + ( label.paddingX * label.scale ) ),
-      Math.floor( ( label.textHeight + label.paddingY ) * label.scale )
+      Math.ceil( 22 + ( label.paddingX * label.scale ) ),
+      Math.ceil( ( label.textHeight + label.paddingY ) * label.scale )
     ]);
   });
 
@@ -509,54 +332,16 @@ describe( 'Label: measureSprite() and drawSprite()', () => {
       scale: function() {},
       fillText: function() {},
       strokeText: function() {},
+      clearRect: function() {},
     });
 
-    label.drawSprite( fakeContext, null );
+    label.drawSprite( fakeContext, { width: 100, height: 90 } );
 
     // XXX: Should we test that certain properties have been set?
     // That might be too much implementation detail though
     expect( fakeContext.scale ).to.not.have.been.called;
     expect( fakeContext.fillText ).to.have.been.calledWithExactly( label.text, 0, label.textVerticalOffset * label.scale );
     expect( fakeContext.strokeText ).to.have.been.calledWithExactly( label.text, 0, label.textVerticalOffset * label.scale );
-  });
-});
-
-describe( 'Label: insertSprite() and destroySprite()', () => {
-  let label, sprite;
-
-  beforeEach( () => {
-    label = standardTestLabel();
-    sprite = label.sprite;
-  });
-
-  it( 'insertSprite() populates .userData on a THREE.Sprite', () => {
-    label.insertSprite( sprite );
-    expect( sprite.userData ).to.deep.equal({ isLabel: true, label: label });
-  });
-
-  it( 'insertSprite() sets the event listener to clear .userData', () => {
-    const spriteStub = stub( sprite, 'addEventListener' );
-    label.insertSprite( sprite );
-    expect( sprite.addEventListener ).to.have.been.called.once;
-  });
-
-  it( 'insertSprite() adds the sprite to the addTo object', () => {
-    const objectStub = stub( label.addTo, 'add' );
-    label.insertSprite( sprite );
-    expect( label.addTo.add ).to.have.been.called.once;
-  });
-
-  it( 'destroySprite() clears the .userData', () => {
-    const cleanUserDataSpy = spy( label, 'cleanUserData' );
-    const objectRemoveSpy = spy( label.addTo, 'remove' );
-
-    label.insertSprite( sprite );
-    label.sprite = sprite;
-    label.destroySprite( sprite );
-
-    expect( objectRemoveSpy ).to.have.been.called.once;
-    expect( cleanUserDataSpy ).to.have.been.called.once;
-    expect( sprite.userData ).to.deep.equal({});
   });
 });
 
@@ -572,27 +357,13 @@ describe('Label: dynamic and lazy properties', () => {
       expect(label).to.have.property('hasSprite').to.be.false; // No sprite yet
     });
 
-    it( 'the label is dirty and invisible before it is generated', () => {
-      expect(label).to.have.property('visible').which.equals( false ); // No sprite yet, never true
+    it( 'the label is dirty before it is generated', () => {
       expect(label).to.have.property('isDirty').which.equals( true ); // No sprite yet, so always dirty
     });
 
-    it( 'the label is no longer dirty and invisible when generated', () => {
-      label.createSprite();
-      expect(label).to.have.property('visible').which.equals( true );
+    it( 'the label is no longer dirty when generated', () => {
+      label.buildSprite();
       expect(label).to.have.property('isDirty').which.equals( false );
-    });
-  });
-
-  describe( '.hasPromise works correctly', () => {
-    it( 'returns false by default', () => {
-      expect(label).to.have.property('hasPromise').which.equals( false );
-    });
-
-    it( 'returns true after triggering .promise', () => {
-      expect(label).to.have.property('hasPromise').which.equals( false );
-      label.promise;
-      expect(label).to.have.property('hasPromise').which.equals( true );
     });
   });
 
@@ -616,18 +387,10 @@ describe('Label: dynamic and lazy properties', () => {
     });
   });
 
-  it( 'setting .text triggers a rebuild of the sprite', () => {
-    let insertSprite = spy( label.insertSprite );
-    let destroySprite = spy( label.destroySprite );
+  it( 'setting .text triggers a rebuild of the sprite if .buildSprite() is called', () => {
     expect(label).to.have.property('isDirty').to.equal( true );
 
-    const sprite = label.sprite;
+    const sprite = label.buildSprite();
     expect(label).to.have.property('isDirty').to.equal( false );
-
-    // Now set the text, this should trigger a rebuild
-    label.text = 'I got changed';
-    expect(label).to.have.property('isDirty').to.equal( false );
-    expect(label).to.have.property('hasSprite').which.equals( true );
-    expect(label).to.have.property('sprite').which.not.equals( sprite );
   });
 });
