@@ -9,5 +9,5 @@
     "requireSpaceBeforeObjectValues": true,
     "disallowSpaceBeforePostfixUnaryOperators": true,
     "disallowNewlineBeforeBlockStatements": false,
-    "esnext": true
+    "validateQuoteMarks": true
 }

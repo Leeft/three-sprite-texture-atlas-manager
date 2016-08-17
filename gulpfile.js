@@ -84,24 +84,31 @@ gulp.task('build', [ 'lint-src', 'clean', 'docs' ], function(done) {
       },
     });
 
+    const f = $.filter(
+      function( file ) {
+        return !( /[.]map$/.test( file.path ) );
+      }
+    );
+
     $.file( umdExportFileName+'.js', umd.code, { src: true } )
       .pipe($.plumber())
       .pipe($.sourcemaps.init({ loadMaps: true }))
       .pipe($.babel())
       .pipe($.sourcemaps.write('./'))
       .pipe(gulp.dest(destinationFolder))
-      .pipe($.filter([ '*', '!**/*.js.map' ]))
+      .pipe(f)
       .pipe($.rename(umdExportFileName + '.min.js'))
       .pipe($.sourcemaps.init({ loadMaps: true }))
       .pipe($.uglify())
       .pipe($.sourcemaps.write('./'))
       .pipe(gulp.dest(destinationFolder))
+      .on('error', gutil.log)
       .on('end', done);
 
     // And create an .es6.js for easy inclusion in modern build pipelines
     bundle.write({
       dest: destinationFolder+'/'+es6ExportFileName+'.js',
-      format: 'es6',
+      format: 'es',
       exports: 'named',
       moduleName: config.mainVarName,
     });
