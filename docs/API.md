@@ -1,6 +1,7 @@
 # API documentation
 
 <a name="module_texture-manager"></a>
+
 ## texture-manager
 Build and destroy "nodes" in your texture atlas easily. It builds one or more [`Knapsack`](#module_texture-manager/knapsack) objects for you, each of which represent a separate square texture atlas with one or more sprite textures of a size defined by you.
 
@@ -24,6 +25,7 @@ var textureManager = new TextureManager();
 var textureManager = new window.threeSpriteAtlasTextureManager();
 ```
 <a name="module_texture-manager..TextureManager"></a>
+
 ### texture-manager~TextureManager
 **Kind**: inner class of <code>[texture-manager](#module_texture-manager)</code>  
 
@@ -44,6 +46,7 @@ var textureManager = new window.threeSpriteAtlasTextureManager();
 -
 
 <a name="new_module_texture-manager..TextureManager_new"></a>
+
 #### new TextureManager([size])
 
 | Param | Type | Default | Description |
@@ -61,6 +64,7 @@ textureManager.allocateNode( ... );
 -
 
 <a name="module_texture-manager..TextureManager+debug"></a>
+
 #### textureManager.debug : <code>object</code>
 The debug property can be set to `true` after instantiating the object, which will make the [`KnapsackNode`](#module_texture-manager/knapsack/node) class draw outlines as it allocates nodes. This can make it much more obvious what is going on, such as whether your text is properly sized and centered.
 
@@ -73,6 +77,7 @@ textureManager.debug = true;
 -
 
 <a name="module_texture-manager..TextureManager+allocate"></a>
+
 #### textureManager.allocate(width, height) ⇒ <code>KnapsackNode</code>
 Allocate a texture atlas node for a sprite image of `width` by `height` pixels. Unlike allocateNode, it does not return a {external:Promise} and it works synchronously.
 
@@ -96,6 +101,7 @@ let node = textureManager.allocate( 100, 20 );
 -
 
 <a name="module_texture-manager..TextureManager+allocateNode"></a>
+
 #### textureManager.allocateNode(width, height) ⇒ <code>[Promise](#external_Promise)</code>
 {external:Promise} based version of [allocate](allocate).
 
@@ -126,6 +132,7 @@ textureManager.allocateNode( 100, 20 ).then(
 -
 
 <a name="module_texture-manager..TextureManager+allocateASync"></a>
+
 #### textureManager.allocateASync(width, height) ⇒ <code>[Promise](#external_Promise)</code>
 Asynchronously allocate a texture atlas node for a sprite image of `width` by `height` pixels. Returns a result through resolving the promise. The asynchronous approach will potentially allow for better optimisation of packing nodes in the texture space.
 
@@ -165,6 +172,7 @@ textureManager.solveASync().then( function( result ) {
 -
 
 <a name="module_texture-manager..TextureManager+solveASync"></a>
+
 #### textureManager.solveASync() ⇒ <code>[Promise](#external_Promise)</code>
 Trigger resolution of any outstanding node allocation promises, i.e. those that have been created with [allocateASync](allocateASync). Call this when you've added nodes, or their promises will not settle.
 
@@ -186,6 +194,7 @@ textureManager.solveASync().then( function( count ) {
 -
 
 <a name="module_texture-manager..TextureManager+release"></a>
+
 #### textureManager.release(node)
 Release the given node.
 
@@ -204,6 +213,7 @@ textureManager.release( node );
 -
 
 <a name="module_texture-manager..TextureManager+textureSize"></a>
+
 #### textureManager.textureSize : <code>integer</code>
 The actual used size of the texture.
 
@@ -214,6 +224,7 @@ The actual used size of the texture.
 -
 
 <a name="module_texture-manager..TextureManager+knapsacks"></a>
+
 #### textureManager.knapsacks : <code>object</code>
 As the texture manager allocates nodes, it creates a new [`Knapsack`](#module_texture-manager/knapsack) when it needs to provide space for nodes. This is an array with all the knapsacks which have been created.
 
@@ -233,6 +244,7 @@ textureManager.knapsacks.forEach( function( knapsack ) {
 
 
 <a name="module_texture-manager/knapsack/node"></a>
+
 ## texture-manager/knapsack/node
 Represents a single rectangular area "node" within a texture atlas canvas, which may have its own [`THREE.Texture`](#external_Texture) with the UV coordinates managed for you. These nodes are created through [`allocateNode()`](module:texture-manager#allocateNode).
 
@@ -254,6 +266,7 @@ tetureManager.allocateNode( 100, 20 ).then(
 );
 ```
 <a name="module_texture-manager/knapsack/node..KnapsackNode"></a>
+
 ### texture-manager/knapsack/node~KnapsackNode
 Do not use this directly, it is managed for you.
 
@@ -280,6 +293,7 @@ Do not use this directly, it is managed for you.
 -
 
 <a name="new_module_texture-manager/knapsack/node..KnapsackNode_new"></a>
+
 #### new KnapsackNode(knapsack)
 
 | Param | Type | Description |
@@ -290,6 +304,7 @@ Do not use this directly, it is managed for you.
 -
 
 <a name="module_texture-manager/knapsack/node..KnapsackNode+release"></a>
+
 #### knapsackNode.release()
 Release this node back to the [`Knapsack`](#module_texture-manager/knapsack) where it is contained. This makes it available to be used by new sprites. Only nodes without children can be released, but a user of this library will only get these leaf nodes returned. Branch nodes are used internally only.
 
@@ -305,6 +320,7 @@ textureManager.release( node );
 -
 
 <a name="module_texture-manager/knapsack/node..KnapsackNode+clear"></a>
+
 #### knapsackNode.clear()
 Clear the area of this node: it erases the context so that it is empty and transparent, and ready to be drawn to.
 
@@ -319,6 +335,7 @@ node.clear();
 -
 
 <a name="module_texture-manager/knapsack/node..KnapsackNode+clipContext"></a>
+
 #### knapsackNode.clipContext() ⇒ <code>CanvasRenderingContext2D</code>
 Set the drawing context tailored towards the area of the sprite, clipping anything outside of it. When done drawing, use [`restoreContext()`](module:texture-manager/knapsack/node#restoreContext) to restore the original drawing context.
 
@@ -340,6 +357,7 @@ node.restoreContext();
 -
 
 <a name="module_texture-manager/knapsack/node..KnapsackNode+restoreContext"></a>
+
 #### knapsackNode.restoreContext()
 Restore the draw context of the [`canvas`](module:texture-manager/knapsack/node#canvas). Call this when done drawing the sprite.
 
@@ -360,6 +378,7 @@ node.restoreContext();
 -
 
 <a name="module_texture-manager/knapsack/node..KnapsackNode+width"></a>
+
 #### knapsackNode.width : <code>integer</code>
 The width in pixels of this sprite's texture node.
 
@@ -376,6 +395,7 @@ textureManager.allocateNode( 30, 10 ).then( function( node ) {
 -
 
 <a name="module_texture-manager/knapsack/node..KnapsackNode+height"></a>
+
 #### knapsackNode.height : <code>integer</code>
 The height in pixels of this sprite's texture node.
 
@@ -392,6 +412,7 @@ textureManager.allocateNode( 30, 10 ).then( function( node ) {
 -
 
 <a name="module_texture-manager/knapsack/node..KnapsackNode+uvCoordinates"></a>
+
 #### knapsackNode.uvCoordinates() ⇒ <code>Array</code>
 The UV coordinates which describe where in the texture this node is located. This is probably not of any practical use to you as a user of this library; it is used internally to map the texture correctly to a sprite.
 
@@ -410,6 +431,7 @@ var bottom = uvs[ 3 ];
 -
 
 <a name="module_texture-manager/knapsack/node..KnapsackNode+canvas"></a>
+
 #### knapsackNode.canvas : <code>[canvas](#external_canvas)</code>
 The HTML `<canvas>` element as supplied by the [`Knapsack`](#module_texture-manager/knapsack) which this node is part of.
 
@@ -420,6 +442,7 @@ The HTML `<canvas>` element as supplied by the [`Knapsack`](#module_texture-mana
 -
 
 <a name="module_texture-manager/knapsack/node..KnapsackNode+context"></a>
+
 #### knapsackNode.context : <code>[CanvasRenderingContext2D](#external_CanvasRenderingContext2D)</code>
 Convenience accessor for the [CanvasRenderingContext2D](#external_CanvasRenderingContext2D) which is associated with the [module:texture-manager/knapsack/node#canvas](module:texture-manager/knapsack/node#canvas). You can use this context to draw on the entire canvas, but you'll probably want to use [`clipContext()`](module:texture-manager/knapsack/node#clipContext) instead.
 
@@ -430,6 +453,7 @@ Convenience accessor for the [CanvasRenderingContext2D](#external_CanvasRenderin
 -
 
 <a name="module_texture-manager/knapsack/node..KnapsackNode+texture"></a>
+
 #### knapsackNode.texture : <code>[Texture](#external_Texture)</code>
 Lazily built [`THREE.Texture`](#external_Texture), with it's UV coordinates already set for you. You can pass this texture straight to your material, and the GPU memory it requires should be shared with all other texture nodes on the same texture.
 
@@ -453,12 +477,14 @@ scene.add( sprite );
 # Internal and external global types
 
 - <a name="threeSpriteAtlasTextureManager"></a>
+
 ## threeSpriteAtlasTextureManager
 **Kind**: global class  
 
 -
 
 <a name="new_threeSpriteAtlasTextureManager_new"></a>
+
 ### new threeSpriteAtlasTextureManager([size])
 The main entry point for 'global' mode, to be used when you're not able to use `require();` or ES6 modules to load the functionality of this library. Include the library by loading the JavaScript directly, or combine it with your other code, and then do:
 
@@ -477,6 +503,7 @@ var textureManager = new window.threeSpriteAtlasTextureManager( 512 );
 
 
 - <a name="external_Promise"></a>
+
 ## Promise
 JavaScript Promises (ES6)
 
@@ -487,6 +514,7 @@ JavaScript Promises (ES6)
 
 
 - <a name="external_canvas"></a>
+
 ## canvas
 HTML `<canvas>` element
 
@@ -497,6 +525,7 @@ HTML `<canvas>` element
 
 
 - <a name="external_Texture"></a>
+
 ## Texture
 A `THREE.Texture` object instance
 
@@ -507,6 +536,7 @@ A `THREE.Texture` object instance
 
 
 - <a name="external_CanvasRenderingContext2D"></a>
+
 ## CanvasRenderingContext2D
 CanvasRenderingContext2D for drawing onto a `<canvas>`
 

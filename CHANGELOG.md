@@ -40,3 +40,12 @@ If you were using this library before v0.1.0 and you specified the path manually
 - Tests expanded
 - New methods: `allocate()`, and `allocateASync()`/`solveASync()`. The first is a simpler synchronous version of `allocateNode` which returns its result instantly; use of the latter two allow the layout engine to batch process the allocations, and that enables the knapsack algorithm to optimise the allocation. See [the API reference](docs/API.md) for the interface.
 - Internals reworked a bit to make the new methods share as much code as possible.
+
+### [0.2.0](https://github.com/Leeft/three-sprite-texture-atlas-manager/releases/tag/v0.2.0)
+
+No functional changes since 0.1.3 (which I've neglected to document it seems).
+
+- Build system updated: latest babel, rollup modules, etc.
+- Stricter linting.
+- Any warnings from my build system eliminated.
+- Made sure all tests are working, no warnings or pending tests are left now.

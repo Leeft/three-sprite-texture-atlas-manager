@@ -1,15 +1,20 @@
-var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+'use strict';
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 (function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() : typeof define === 'function' && define.amd ? define(factory) : global.threeSpriteAtlasTextureManager = factory();
-})(this, function () {
+  (typeof exports === 'undefined' ? 'undefined' : _typeof(exports)) === 'object' && typeof module !== 'undefined' ? module.exports = factory() : typeof define === 'function' && define.amd ? define(factory) : global.threeSpriteAtlasTextureManager = factory();
+})(undefined, function () {
   'use strict';
 
   /**
   Describes a rectangular area witin the knapsack. Abstracts the basic math away from the {@link module:texture-manager/knapsack/node|`KnapsackNode`} module.
-   @module texture-manager/knapsack/rectangle
+  
+  @module texture-manager/knapsack/rectangle
   */
 
   /**
@@ -20,7 +25,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
    * @param {integer} bottom - Bottom most pixel index of this rectangle
   */
 
-  var KnapsackRectangle = (function () {
+  var KnapsackRectangle = function () {
     function KnapsackRectangle(left, top, right, bottom) {
       _classCallCheck(this, KnapsackRectangle);
 
@@ -31,16 +36,11 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     }
 
     /**
-     * Do not use this directly, it is managed for you.
-     * @constructor
-     * @param {Knapsack} - The {@link module:texture-manager/knapsack|`Knapsack`} this node is to become a part of.
-     */
-
-    /**
      * The center X coordinate of this rectangle.
      * @type {integer}
      * @readonly
      */
+
 
     _createClass(KnapsackRectangle, [{
       key: 'Xcentre',
@@ -53,6 +53,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
        * @type {integer}
        * @readonly
        */
+
     }, {
       key: 'Ycentre',
       get: function get() {
@@ -64,6 +65,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
        * @type {integer}
        * @readonly
        */
+
     }, {
       key: 'width',
       get: function get() {
@@ -75,6 +77,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
        * @type {integer}
        * @readonly
        */
+
     }, {
       key: 'height',
       get: function get() {
@@ -83,9 +86,37 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     }]);
 
     return KnapsackRectangle;
-  })();
+  }();
 
-  var KnapsackNode = (function () {
+  /**
+  Represents a single rectangular area "node" within a texture atlas canvas, which may have its own {@link external:Texture|`THREE.Texture`} with the UV coordinates managed for you. These nodes are created through {@link module:texture-manager#allocateNode|`allocateNode()`}.
+  
+  The implementation is based on [http://www.blackpawn.com/texts/lightmaps/default.html](http://www.blackpawn.com/texts/lightmaps/default.html). Visit that page for a good impression of what we're achieving here.
+  
+  See http://jsfiddle.net/Shiari/sbda72k9/ for a more complete and working example than the one below.
+  
+  @module texture-manager/knapsack/node
+  @example
+  tetureManager.allocateNode( 100, 20 ).then(
+    function( node ) {
+      // Do something with the node in this Promise, like create
+      // a sprite.
+    },
+    function( error ) {
+      // Promise was rejected
+      console.error( "Could not allocate node:", error );
+    }
+  );
+  */
+
+  /**
+   * Do not use this directly, it is managed for you.
+   * @constructor
+   * @param {Knapsack} - The {@link module:texture-manager/knapsack|`Knapsack`} this node is to become a part of.
+   */
+
+
+  var KnapsackNode = function () {
     function KnapsackNode(knapsack) {
       _classCallCheck(this, KnapsackNode);
 
@@ -141,20 +172,16 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     }
 
     /**
-      * @constructor
-      * @param {TextureManager} textureManager - The {@link module:texture-manager|`TextureManager`} which created this `Knapsack`
-      * @param {integer} size - The size of the texture
-      */
-
-    /**
      * The HTML `<canvas>` element as supplied by the {@link module:texture-manager/knapsack|`Knapsack`} which this node is part of.
      * @type {external:canvas}
      * @readonly
      * @category provider
      */
 
+
     _createClass(KnapsackNode, [{
       key: 'hasChildren',
+
 
       /**
        * Returns true if this node has any children, which means it's not available to be drawn in. Its children may be suitable for this though.
@@ -172,6 +199,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
        * @category information
        * @private
        */
+
     }, {
       key: 'isOccupied',
       value: function isOccupied() {
@@ -189,6 +217,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
        * var right  = uvs[ 2 ];
        * var bottom = uvs[ 3 ];
        */
+
     }, {
       key: 'uvCoordinates',
       value: function uvCoordinates() {
@@ -204,6 +233,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
        * // or, if you like typing:
        * textureManager.release( node );
        */
+
     }, {
       key: 'release',
       value: function release() {
@@ -229,6 +259,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
        * // Erase the contents of the sprite
        * node.clear();
        */
+
     }, {
       key: 'clear',
       value: function clear() {
@@ -249,6 +280,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
        * // other drawing commands
        * node.restoreContext();
        */
+
     }, {
       key: 'clipContext',
       value: function clipContext() {
@@ -274,6 +306,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
        * // other drawing commands
        * node.restoreContext();
        */
+
     }, {
       key: 'restoreContext',
       value: function restoreContext() {
@@ -288,6 +321,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
        * @ignore
        * @category allocation
        */
+
     }, {
       key: 'allocate',
       value: function allocate(width, height) {
@@ -361,6 +395,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
        * @ignore
        * @category allocation
        */
+
     }, {
       key: 'claim',
       value: function claim() {
@@ -386,6 +421,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
        * @readonly
        * @category provider
        */
+
     }, {
       key: 'context',
       get: function get() {
@@ -402,6 +438,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
        *   console.log( node.width ); // => 30
        * });
        */
+
     }, {
       key: 'width',
       get: function get() {
@@ -418,6 +455,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
        *   console.log( node.height ); // => 10
        * });
        */
+
     }, {
       key: 'height',
       get: function get() {
@@ -438,6 +476,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
        * var sprite = new THREE.Sprite( material );
        * scene.add( sprite );
        */
+
     }, {
       key: 'texture',
       get: function get() {
@@ -455,9 +494,22 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     }]);
 
     return KnapsackNode;
-  })();
+  }();
 
-  var Knapsack = (function () {
+  /**
+  Represents a single texture atlas with several sprites and its corresponding base {@link external:Texture|`THREE.Texture`}. You do not interact with this class directly, it is entirely managed for you by a {@link module:texture-manager|`TextureManager`} instance. Documented only to satisfy the curiosity of fellow developers stumbling upon this.
+  
+  @module texture-manager/knapsack
+   */
+
+  /**
+    * @constructor
+    * @param {TextureManager} textureManager - The {@link module:texture-manager|`TextureManager`} which created this `Knapsack`
+    * @param {integer} size - The size of the texture
+    */
+
+
+  var Knapsack = function () {
     function Knapsack(textureManager, size) {
       _classCallCheck(this, Knapsack);
 
@@ -471,23 +523,15 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     }
 
     /**
-      * @constructor
-      * @param {integer} [size=1024] Optional size for the textures. Must be a power of two.
-      * @example
-      * // We want 512x512 pixel textures
-      * var textureManager = new TextureManager( 512 );
-      * ...
-      * textureManager.allocateNode( ... );
-      */
-
-    /**
      * Lazily built HTML `<canvas>` element for this `Knapsack`.
      * @type {external:canvas}
      * @readonly
      */
 
+
     _createClass(Knapsack, [{
       key: 'allocateNode',
+
 
       /**
        * Proxy method, allocate a texture atlas node for a sprite image of `width` by `height` pixels.
@@ -514,6 +558,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
        * @type {external:Texture}
        * @readonly
        */
+
     }, {
       key: 'rootTexture',
       get: function get() {
@@ -525,9 +570,45 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     }]);
 
     return Knapsack;
-  })();
+  }();
 
-  var TextureManager = (function () {
+  /**
+  Build and destroy "nodes" in your texture atlas easily. It builds one or more {@link module:texture-manager/knapsack|`Knapsack`} objects for you, each of which represent a separate square texture atlas with one or more sprite textures of a size defined by you.
+  
+  @module texture-manager
+  
+  @example
+  // From github:
+  // $ npm install --save-dev leeft/three-sprite-texture-atlas-manager
+  // from npm:
+  // $ npm install --save-dev three-sprite-texture-atlas-manager
+  //
+  // Through ES2015 (ES6) modules (highly recommended):
+  import TextureManager from 'three-sprite-texture-atlas-manager';
+  var textureManager = new TextureManager();
+  
+  // Node.js or CommonJS require():
+  // then:
+  var TextureManager = require('three-sprite-texture-atlas-manager');
+  var textureManager = new TextureManager();
+  
+  // global namespace
+  var textureManager = new window.threeSpriteAtlasTextureManager();
+   *
+   */
+
+  /**
+    * @constructor
+    * @param {integer} [size=1024] Optional size for the textures. Must be a power of two.
+    * @example
+    * // We want 512x512 pixel textures
+    * var textureManager = new TextureManager( 512 );
+    * ...
+    * textureManager.allocateNode( ... );
+    */
+
+
+  var TextureManager = function () {
     function TextureManager(size) {
       _classCallCheck(this, TextureManager);
 
@@ -572,6 +653,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
      * @ignore
      */
 
+
     _createClass(TextureManager, [{
       key: '_addKnapsack',
       value: function _addKnapsack(size) {
@@ -589,8 +671,10 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
        * @readonly
        * @category readonly
        */
+
     }, {
       key: 'allocate',
+
 
       /**
        * Allocate a texture atlas node for a sprite image of `width` by `height` pixels. Unlike allocateNode, it does not return a {external:Promise} and it works synchronously.
@@ -603,8 +687,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
        * let node = textureManager.allocate( 100, 20 );
        */
       value: function allocate(width, height) {
-        var node = null;
-
         // Prevent allocating knapsacks when there's no chance to fit the node
         // FIXME TODO: try a bigger texture size if it doesn't fit?
         this._validateSize(width, height);
@@ -631,6 +713,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
        *   }
        * );
        */
+
     }, {
       key: 'allocateNode',
       value: function allocateNode(width, height) {
@@ -644,7 +727,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             resolve(_this._allocate(width, height));
           } catch (error) {
             reject(error);
-          };
+          }
         });
       }
 
@@ -677,6 +760,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
        *   console.log( `${ result.length } allocations have resolved` );
        * });
        */
+
     }, {
       key: 'allocateASync',
       value: function allocateASync(width, height) {
@@ -686,7 +770,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           this._queue = [];
         }
 
-        var queueEntry = undefined;
+        var queueEntry = void 0;
 
         var promise = new Promise(function (resolve, reject) {
           try {
@@ -702,7 +786,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             };
           } catch (error) {
             reject(error);
-          };
+          }
         });
 
         if (queueEntry) {
@@ -725,11 +809,13 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
        *   console.log( `${ count } node allocations have been resolved` );
        * });
        */
+
     }, {
       key: 'solveASync',
       value: function solveASync() {
         var _this3 = this;
 
+        /*eslint no-unused-vars: 0*/
         if (!Array.isArray(this._queue)) {
           throw new Error('You\'re trying to resolve a queue which hasn\'t been set up. Call allocateASync before using this.');
         }
@@ -763,6 +849,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
        * @private
        * @ignore
        */
+
     }, {
       key: '_validateSize',
       value: function _validateSize(width, height) {
@@ -784,6 +871,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
        * @private
        * @ignore
        */
+
     }, {
       key: '_allocate',
       value: function _allocate(width, height) {
@@ -812,6 +900,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
        * @example
        * textureManager.release( node );
        */
+
     }, {
       key: 'release',
       value: function release(node) {
@@ -827,7 +916,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     }]);
 
     return TextureManager;
-  })();
+  }();
 
   return TextureManager;
 });

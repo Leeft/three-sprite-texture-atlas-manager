@@ -14,10 +14,10 @@ Describes a rectangular area witin the knapsack. Abstracts the basic math away f
 
 class KnapsackRectangle {
   constructor( left, top, right, bottom ) {
-    this.left   = Math.floor( ( typeof left   === 'number' && isFinite( left   ) ) ? left   : 0 );
-    this.top    = Math.floor( ( typeof top    === 'number' && isFinite( top    ) ) ? top    : 0 );
-    this.right  = Math.floor( ( typeof right  === 'number' && isFinite( right  ) ) ? right  : 0 );
-    this.bottom = Math.floor( ( typeof bottom === 'number' && isFinite( bottom ) ) ? bottom : 0 );
+    this.left   = Math.floor( ( typeof left   === `number` && isFinite( left   ) ) ? left   : 0 );
+    this.top    = Math.floor( ( typeof top    === `number` && isFinite( top    ) ) ? top    : 0 );
+    this.right  = Math.floor( ( typeof right  === `number` && isFinite( right  ) ) ? right  : 0 );
+    this.bottom = Math.floor( ( typeof bottom === `number` && isFinite( bottom ) ) ? bottom : 0 );
   }
 
   /**
@@ -48,6 +48,27 @@ class KnapsackRectangle {
    */
   get height () { return ( this.bottom - this.top ); }
 }
+
+/**
+Represents a single rectangular area "node" within a texture atlas canvas, which may have its own {@link external:Texture|`THREE.Texture`} with the UV coordinates managed for you. These nodes are created through {@link module:texture-manager#allocateNode|`allocateNode()`}.
+
+The implementation is based on [http://www.blackpawn.com/texts/lightmaps/default.html](http://www.blackpawn.com/texts/lightmaps/default.html). Visit that page for a good impression of what we're achieving here.
+
+See http://jsfiddle.net/Shiari/sbda72k9/ for a more complete and working example than the one below.
+
+@module texture-manager/knapsack/node
+@example
+tetureManager.allocateNode( 100, 20 ).then(
+  function( node ) {
+    // Do something with the node in this Promise, like create
+    // a sprite.
+  },
+  function( error ) {
+    // Promise was rejected
+    console.error( "Could not allocate node:", error );
+  }
+);
+*/
 
 /**
  * Do not use this directly, it is managed for you.
@@ -121,7 +142,7 @@ class KnapsackNode {
    * @readonly
    * @category provider
    */
-  get context () { return this.knapsack.canvas.getContext('2d'); }
+  get context () { return this.knapsack.canvas.getContext(`2d`); }
 
   /**
    * The width in pixels of this sprite's texture node.
@@ -225,7 +246,7 @@ class KnapsackNode {
    */
   release() {
     if ( this.hasChildren() ) {
-      throw new Error( 'Can not release tree node, still has children' );
+      throw new Error( `Can not release tree node, still has children` );
     }
 
     if ( this._texture !== null ) {
@@ -378,11 +399,11 @@ class KnapsackNode {
       if ( this.knapsack.textureManager.debug ) {
         var context = this.context;
         context.lineWidth = 4.0;
-        context.strokeStyle = 'rgba(255,0,0,1)';
+        context.strokeStyle = `rgba(255,0,0,1)`;
         context.strokeRect( this.leftChild.rectangle.left, this.leftChild.rectangle.top, this.leftChild.width, this.leftChild.height );
 
         context.lineWidth = 4.0;
-        context.strokeStyle = 'rgba(0,255,0,1)';
+        context.strokeStyle = `rgba(0,255,0,1)`;
         context.strokeRect( this.rightChild.rectangle.left, this.rightChild.rectangle.top, this.rightChild.width, this.rightChild.height );
       }
 
@@ -403,11 +424,17 @@ class KnapsackNode {
     if ( this.knapsack.textureManager.debug ) {
       var context = this.context;
       context.lineWidth = 2.0;
-      context.strokeStyle = 'rgba( 0, 0, 255, 1 )';
+      context.strokeStyle = `rgba( 0, 0, 255, 1 )`;
       context.strokeRect( this.rectangle.left + 0.5, this.rectangle.top + 0.5, this.width - 1, this.height - 1 );
     }
   }
 }
+
+/**
+Represents a single texture atlas with several sprites and its corresponding base {@link external:Texture|`THREE.Texture`}. You do not interact with this class directly, it is entirely managed for you by a {@link module:texture-manager|`TextureManager`} instance. Documented only to satisfy the curiosity of fellow developers stumbling upon this.
+
+@module texture-manager/knapsack
+ */
 
 /**
   * @constructor
@@ -432,7 +459,7 @@ class Knapsack {
    */
   get canvas () {
     if ( ! this._canvas ) {
-      this._canvas = document.createElement('canvas');
+      this._canvas = document.createElement(`canvas`);
       this._canvas.width  = this.textureSize;
       this._canvas.height = this.textureSize;
     }
@@ -463,6 +490,31 @@ class Knapsack {
 }
 
 /**
+Build and destroy "nodes" in your texture atlas easily. It builds one or more {@link module:texture-manager/knapsack|`Knapsack`} objects for you, each of which represent a separate square texture atlas with one or more sprite textures of a size defined by you.
+
+@module texture-manager
+
+@example
+// From github:
+// $ npm install --save-dev leeft/three-sprite-texture-atlas-manager
+// from npm:
+// $ npm install --save-dev three-sprite-texture-atlas-manager
+//
+// Through ES2015 (ES6) modules (highly recommended):
+import TextureManager from 'three-sprite-texture-atlas-manager';
+var textureManager = new TextureManager();
+
+// Node.js or CommonJS require():
+// then:
+var TextureManager = require('three-sprite-texture-atlas-manager');
+var textureManager = new TextureManager();
+
+// global namespace
+var textureManager = new window.threeSpriteAtlasTextureManager();
+ *
+ */
+
+/**
   * @constructor
   * @param {integer} [size=1024] Optional size for the textures. Must be a power of two.
   * @example
@@ -480,7 +532,7 @@ class TextureManager {
      * @ignore
      * @category readonly
      */
-    this.size = ( ( typeof size === 'number' ) && /^(128|256|512|1024|2048|4096|8192|16384)$/.test( size ) ) ? size : 1024;
+    this.size = ( ( typeof size === `number` ) && /^(128|256|512|1024|2048|4096|8192|16384)$/.test( size ) ) ? size : 1024;
 
     /**
      * As the texture manager allocates nodes, it creates a new {@link module:texture-manager/knapsack|`Knapsack`} when it needs to provide space for nodes. This is an array with all the knapsacks which have been created.
@@ -543,8 +595,6 @@ class TextureManager {
    * let node = textureManager.allocate( 100, 20 );
    */
   allocate( width, height ) {
-    let node = null;
-
     // Prevent allocating knapsacks when there's no chance to fit the node
     // FIXME TODO: try a bigger texture size if it doesn't fit?
     this._validateSize( width, height );
@@ -580,7 +630,7 @@ class TextureManager {
         resolve( this._allocate( width, height ) );
       } catch ( error ) {
         reject( error );
-      };
+      }
     });
   }
 
@@ -635,7 +685,7 @@ class TextureManager {
       }
       catch ( error ) {
         reject( error );
-      };
+      }
     });
 
     if ( queueEntry ) {
@@ -659,6 +709,7 @@ class TextureManager {
    * });
    */
   solveASync() {
+    /*eslint no-unused-vars: 0*/
     if ( ! Array.isArray( this._queue ) ) {
       throw new Error( `You're trying to resolve a queue which hasn't been set up. Call allocateASync before using this.` );
     }
