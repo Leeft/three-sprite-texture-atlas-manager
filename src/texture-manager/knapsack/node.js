@@ -93,7 +93,7 @@ class KnapsackNode {
    * @readonly
    * @category provider
    */
-  get context () { return this.knapsack.canvas.getContext('2d'); }
+  get context () { return this.knapsack.canvas.getContext(`2d`); }
 
   /**
    * The width in pixels of this sprite's texture node.
@@ -197,7 +197,7 @@ class KnapsackNode {
    */
   release() {
     if ( this.hasChildren() ) {
-      throw new Error( 'Can not release tree node, still has children' );
+      throw new Error( `Can not release tree node, still has children` );
     }
 
     if ( this._texture !== null ) {
@@ -350,11 +350,11 @@ class KnapsackNode {
       if ( this.knapsack.textureManager.debug ) {
         var context = this.context;
         context.lineWidth = 4.0;
-        context.strokeStyle = 'rgba(255,0,0,1)';
+        context.strokeStyle = `rgba(255,0,0,1)`;
         context.strokeRect( this.leftChild.rectangle.left, this.leftChild.rectangle.top, this.leftChild.width, this.leftChild.height );
 
         context.lineWidth = 4.0;
-        context.strokeStyle = 'rgba(0,255,0,1)';
+        context.strokeStyle = `rgba(0,255,0,1)`;
         context.strokeRect( this.rightChild.rectangle.left, this.rightChild.rectangle.top, this.rightChild.width, this.rightChild.height );
       }
 
@@ -375,7 +375,7 @@ class KnapsackNode {
     if ( this.knapsack.textureManager.debug ) {
       var context = this.context;
       context.lineWidth = 2.0;
-      context.strokeStyle = 'rgba( 0, 0, 255, 1 )';
+      context.strokeStyle = `rgba( 0, 0, 255, 1 )`;
       context.strokeRect( this.rectangle.left + 0.5, this.rectangle.top + 0.5, this.width - 1, this.height - 1 );
     }
   }

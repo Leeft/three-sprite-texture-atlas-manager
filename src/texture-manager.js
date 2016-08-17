@@ -43,7 +43,7 @@ class TextureManager {
      * @ignore
      * @category readonly
      */
-    this.size = ( ( typeof size === 'number' ) && /^(128|256|512|1024|2048|4096|8192|16384)$/.test( size ) ) ? size : 1024;
+    this.size = ( ( typeof size === `number` ) && /^(128|256|512|1024|2048|4096|8192|16384)$/.test( size ) ) ? size : 1024;
 
     /**
      * As the texture manager allocates nodes, it creates a new {@link module:texture-manager/knapsack|`Knapsack`} when it needs to provide space for nodes. This is an array with all the knapsacks which have been created.
@@ -106,8 +106,6 @@ class TextureManager {
    * let node = textureManager.allocate( 100, 20 );
    */
   allocate( width, height ) {
-    let node = null;
-
     // Prevent allocating knapsacks when there's no chance to fit the node
     // FIXME TODO: try a bigger texture size if it doesn't fit?
     this._validateSize( width, height );
@@ -143,7 +141,7 @@ class TextureManager {
         resolve( this._allocate( width, height ) );
       } catch ( error ) {
         reject( error );
-      };
+      }
     });
   }
 
@@ -198,7 +196,7 @@ class TextureManager {
       }
       catch ( error ) {
         reject( error );
-      };
+      }
     });
 
     if ( queueEntry ) {
@@ -222,6 +220,7 @@ class TextureManager {
    * });
    */
   solveASync() {
+    /*eslint no-unused-vars: 0*/
     if ( ! Array.isArray( this._queue ) ) {
       throw new Error( `You're trying to resolve a queue which hasn't been set up. Call allocateASync before using this.` );
     }

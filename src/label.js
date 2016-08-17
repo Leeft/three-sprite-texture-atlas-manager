@@ -1,15 +1,15 @@
-import TextureManager from './texture-manager';
+//import TextureManager from './texture-manager';
 
 const DEFAULTS = {
-  fontFamily: `'Segoe UI', 'Lucida Grande', 'Tahoma', 'Calibri', 'Roboto', sans-serif`,
+  fontFamily: `"Segoe UI", "Lucida Grande", "Tahoma", "Calibri", "Roboto", sans-serif`,
   scale: 1.0, // Overall scale, this affects all the other values as well
   bold: false,
   textHeight: 64, // in px
   textVerticalOffset: 8.5, // number of 'scale' units the text is shifted by
-  textAlign: 'center',
-  textBaseline: 'middle',
-  fillStyle: 'rgb(255,255,128)',
-  strokeStyle: 'rgb(0,0,0)',
+  textAlign: `center`,
+  textBaseline: `middle`,
+  fillStyle: `rgb(255,255,128)`,
+  strokeStyle: `rgb(0,0,0)`,
   paddingX: 6, // number of 'scale' units to add to the width
   paddingY: 36.5, // number of 'scale' units to add to the height
   outline: 2.4,
@@ -21,7 +21,7 @@ class Label {
     Object.assign( this, DEFAULTS, arguments[ 0 ] );
 
     // Force a check for these important properties
-    [ 'textureManager', 'text' ].forEach( prop => {
+    [ `textureManager`, `text` ].forEach( prop => {
       this[ prop ] = this[ prop ];
     });
   }
@@ -33,7 +33,7 @@ class Label {
 
   set textureManager ( tm ) {
     if ( this._textureManager && tm !== this._textureManager ) {
-      throw new Error( 'Create new label instead of resetting the texture-manager' );
+      throw new Error( `Create new label instead of resetting the texture-manager` );
     }
     // FIXME: This check doesn't work well in practice
     //if ( ! ( tm instanceof TextureManager ) ) {
@@ -53,8 +53,8 @@ class Label {
 
 
   set text ( text ) {
-    if ( ! ( typeof text === 'string' ) || ! text.trim().length > 0 ) {
-      throw new Error( 'No text supplied for the label' );
+    if ( ! ( typeof text === `string` ) || ! text.trim().length > 0 ) {
+      throw new Error( `No text supplied for the label` );
     }
 
     text = text.trim();
@@ -73,15 +73,15 @@ class Label {
 
 
   measureSprite () {
-    const canvas = document.createElement('canvas');
+    const canvas = document.createElement(`canvas`);
     canvas.width = canvas.height = 1;
 
-    const context = canvas.getContext('2d');
+    const context = canvas.getContext(`2d`);
     context.font  = this.fontStyle;
 
     return [
       Math.ceil( context.measureText( this.text ).width + ( this.paddingX * this.scale ) ),
-      Math.ceil( ( this.textHeight + this.paddingY ) * this.scale ),
+      Math.ceil( ( this.textHeight + this.paddingY ) * this.scale )
     ];
   }
 
@@ -211,13 +211,13 @@ class Label {
     }
   }
 
-  drawSprite ( context, node ) {
+  drawSprite ( context /*, node */ ) {
     context.font = this.fontStyle;
     context.textAlign = this.textAlign;
     context.textBaseline = this.textBaseline;
     context.fillStyle = this.fillStyle;
-    context.lineCap = 'round';
-    context.lineJoin = 'round';
+    context.lineCap = `round`;
+    context.lineJoin = `round`;
     context.lineWidth = this.outline * this.scale;
     context.miterLimit = 2;
     context.fillText( this.text, 0, this.textVerticalOffset * this.scale );

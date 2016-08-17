@@ -29,7 +29,7 @@ class Knapsack {
    */
   get canvas () {
     if ( ! this._canvas ) {
-      this._canvas = document.createElement('canvas');
+      this._canvas = document.createElement(`canvas`);
       this._canvas.width  = this.textureSize;
       this._canvas.height = this.textureSize;
     }

@@ -61,7 +61,7 @@ class IconLabel extends Label {
     return Math.ceil( this.iconSize * this.scale );
   }
 
-  drawSprite ( context, node ) {
+  drawSprite ( context /*, node */ ) {
     super.drawSprite(...arguments);
 
     if ( ! this.icons.length ) {
@@ -84,10 +84,10 @@ class IconLabel extends Label {
       context.beginPath();
       context.rect(
         x, ( verticalOffset - ( iconSize / 2 ) ), // x, y
-        iconsWidth, iconsHeight,
+        iconsWidth, iconsHeight
       );
       context.lineWidth = 4 * this.scale;
-      context.strokeStyle = 'rgba(255,255,0,0.7)';
+      context.strokeStyle = `rgba(255,255,0,0.7)`;
       context.stroke();
       context.closePath();
     }
@@ -95,15 +95,15 @@ class IconLabel extends Label {
     this.icons.forEach( symbol => {
 
       let offX = 0, offY = 0;
-      if ( typeof symbol.offset === 'object' && 'x' in symbol.offset && 'y' in symbol.offset ) {
+      if ( typeof symbol.offset === `object` && `x` in symbol.offset && `y` in symbol.offset ) {
         [ offX, offY ] = [ symbol.offset.x * this.scale, symbol.offset.y * this.scale ];
       }
 
-      context.font = ( this.iconSize * symbol.scale * this.scale ).toFixed(2) + 'px ' + symbol.fontFamily;
+      context.font = ( this.iconSize * symbol.scale * this.scale ).toFixed(2) + `px ` + symbol.fontFamily;
       context.strokeStyle = this.strokeStyle;
-      context.textAlign = 'center'; // TODO: more user control?
+      context.textAlign = `center`; // TODO: more user control?
       context.lineWidth = ( this.lineWidth * this.scale );
-      context.textBaseline = 'middle'; // TODO: more user control?
+      context.textBaseline = `middle`; // TODO: more user control?
       context.strokeText( symbol.code, ( x + offX + halfIcon ), ( verticalOffset + offY ) );
       context.fillStyle = symbol.color;
       context.fillText( symbol.code, ( x + offX + halfIcon ), ( verticalOffset + offY ) );
@@ -112,10 +112,10 @@ class IconLabel extends Label {
         context.beginPath();
         context.rect(
           offX + x, verticalOffset + offY - halfIcon, // x, y
-          iconSize - 1.5, iconSize - 1.5, // w, h
+          iconSize - 1.5, iconSize - 1.5 // w, h
         );
         context.lineWidth = 3 * this.scale;
-        context.strokeStyle = 'rgba(255,0,0,0.7)';
+        context.strokeStyle = `rgba(255,0,0,0.7)`;
         context.stroke();
         context.closePath();
       }

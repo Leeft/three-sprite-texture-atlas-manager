@@ -14,10 +14,10 @@ Describes a rectangular area witin the knapsack. Abstracts the basic math away f
 
 class KnapsackRectangle {
   constructor( left, top, right, bottom ) {
-    this.left   = Math.floor( ( typeof left   === 'number' && isFinite( left   ) ) ? left   : 0 );
-    this.top    = Math.floor( ( typeof top    === 'number' && isFinite( top    ) ) ? top    : 0 );
-    this.right  = Math.floor( ( typeof right  === 'number' && isFinite( right  ) ) ? right  : 0 );
-    this.bottom = Math.floor( ( typeof bottom === 'number' && isFinite( bottom ) ) ? bottom : 0 );
+    this.left   = Math.floor( ( typeof left   === `number` && isFinite( left   ) ) ? left   : 0 );
+    this.top    = Math.floor( ( typeof top    === `number` && isFinite( top    ) ) ? top    : 0 );
+    this.right  = Math.floor( ( typeof right  === `number` && isFinite( right  ) ) ? right  : 0 );
+    this.bottom = Math.floor( ( typeof bottom === `number` && isFinite( bottom ) ) ? bottom : 0 );
   }
 
   /**
