@@ -49,3 +49,7 @@ No functional changes since 0.1.3 (which I've neglected to document it seems).
 - Stricter linting.
 - Any warnings from my build system eliminated.
 - Made sure all tests are working, no warnings or pending tests are left now.
+
+### [0.2.1](https://github.com/Leeft/three-sprite-texture-atlas-manager/releases/tag/v0.2.1)
+
+- Removed obsolete (and failing build due to a `const`) travis CI build of node 0.10
