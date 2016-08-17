@@ -150,7 +150,7 @@ describe( 'IconLabel: object instantiation', () => {
 });
 
 describe( 'IconLabel: .text property and friends', () => {
-  it( `.text only allows a valid non-empty string to be set`, () => {
+  it( '.text only allows a valid non-empty string to be set', () => {
     const label = standardTestLabel();
     expect( () => { label.text = '' } ).to.throw( Error, 'No text supplied' );
     expect( () => { label.text = '        ' } ).to.throw( Error, 'No text supplied' );
@@ -160,7 +160,7 @@ describe( 'IconLabel: .text property and friends', () => {
     expect( () => { label.text = '1' } ).to.not.throw();
   });
 
-  it( `.text marks the label as dirty when the text is updated`, () => {
+  it( '.text marks the label as dirty when the text is updated', () => {
     const label = standardTestLabel();
     expect( label ).to.have.a.property('isDirty').which.is.true;
     label.isDirty = false;
@@ -174,7 +174,7 @@ describe( 'IconLabel: .text property and friends', () => {
 });
 
 describe( 'IconLabel: .icons property and friends', () => {
-  it( `.icons marks the label as dirty when it is updated`, () => {
+  it( '.icons marks the label as dirty when it is updated', () => {
     const label = standardTestLabel();
     expect( label ).to.have.a.property('isDirty').which.is.true;
     label.isDirty = false;
@@ -207,8 +207,7 @@ describe( 'IconLabel: .node', () => {
     expect( label ).to.have.property('node').which.equals( node );
   });
 
-  // FIXME
-  xit( 'is reallocated when needed', () => {
+  it( 'is reallocated when needed', () => {
     const firstNode = label.node;
     label.text = 'A much longer string sdfd s df sd fs dff d fsdf sd fsd f';
     const secondNode = label.node;
@@ -232,12 +231,12 @@ describe( 'IconLabel: .sprite and .hasSprite', () => {
   });
 
   describe( 'getting the .sprite property', () => {
-    it( `returns a valid sprite`, () => {
+    it( 'returns a valid sprite', () => {
       expect( label ).to.have.a.property('sprite').which.is.an('object')
         .and.is.instanceOf( THREE.Sprite );
     });
 
-    it( `continues to return the same sprite`, () => {
+    it( 'continues to return the same sprite', () => {
       const sprite = label.buildSprite();
       expect( label ).to.have.a.property('sprite').which.is.an('object')
         .and.equals( sprite );
@@ -407,11 +406,11 @@ describe('IconLabel: dynamic and lazy properties', () => {
     });
 
     it( `.fontStyle can't be set directly`, () => {
-      label.fontStyle = 'XXX';
+      expect( () => { label.fontStyle = 'XXX' } ).to.throw( TypeError );
       expect(label).to.have.property('fontStyle').which.matches( new RegExp( `^\\d+px ${ label.fontFamily }` ) );
     });
 
-    it( `setting the .bold property has effect on fontStyle`, () => {
+    it( 'setting the .bold property has effect on fontStyle', () => {
       label.bold = true;
       expect(label).to.have.property('fontStyle').which.matches( new RegExp( `^Bold \\d+px ${ label.fontFamily }` ) );
       label.bold = false;
@@ -422,7 +421,7 @@ describe('IconLabel: dynamic and lazy properties', () => {
   it( 'setting .text triggers a rebuild of the sprite if .buildSprite() is called', () => {
     expect(label).to.have.property('isDirty').to.equal( true );
 
-    const sprite = label.buildSprite();
+    label.buildSprite();
     expect(label).to.have.property('isDirty').to.equal( false );
   });
 });

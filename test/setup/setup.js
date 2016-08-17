@@ -3,9 +3,6 @@ module.exports = function() {
 
   global.THREE = require('three');
 
-  // Mock 'document.createElement()' to return a fake canvas.
-  // This is a bit more convenient rather than requiring both the canvas
-  // and jsdom node modules to be installed as well.
   const context = {
     clearRect: function() {},
     save: function() {},
@@ -14,7 +11,7 @@ module.exports = function() {
     closePath: function() {},
     rect: function() {},
     clip: function() {},
-    measureText: function( text ) { return { width: text.length } },
+    measureText: function( text ) { return { width: text.length * 5 } },
     translate: function() {},
     strokeRect: function() {},
     scale: function() {},
@@ -22,6 +19,10 @@ module.exports = function() {
     strokeText: function() {},
     stroke: function() {},
   };
+
+  // Mock 'document.createElement()' to return a fake canvas.
+  // This is a bit more convenient rather than requiring both the canvas
+  // and jsdom node modules to be installed as well.
   global.document = {
     'createElement': function( name ) {
       if ( name === 'div' ) {

@@ -89,7 +89,7 @@ describe( 'TextureManager: the generator for allocateASync() and solveASync() wo
 
 describe( 'TextureManager: multiple knapsack allocation', () => {
   const tm = new TextureManager( 256 );
-  let one, two, three, four, five, six, seven, eight;
+  let seventhNode;
 
   it( 'is safe to call release without a node', () => {
     expect( tm.release() ).to.equal.undefined;
@@ -131,8 +131,7 @@ describe( 'TextureManager: multiple knapsack allocation', () => {
   // +---------+
 
   it( 'allocates the first node correctly (top left)  (asynchronous method)', done => {
-    return tm.allocateNode( 128, 128 ).then( node => {
-      one = node;
+    tm.allocateNode( 128, 128 ).then( node => {
       expect( node ).to.be.an('object');
       expect( node.rectangle.left ).to.equal( 0 );
       expect( node.rectangle.top ).to.equal( 0 );
@@ -148,8 +147,7 @@ describe( 'TextureManager: multiple knapsack allocation', () => {
   });
 
   it( 'allocates the second node correctly (top right) (asynchronous method)', done => {
-    return tm.allocateNode( 128, 128 ).then( node => {
-      two = node;
+    tm.allocateNode( 128, 128 ).then( node => {
       expect( node.rectangle.left ).to.equal( 128 );
       expect( node.rectangle.top ).to.equal( 0 );
       expect( node.rectangle.right ).to.equal( 256 );
@@ -161,7 +159,6 @@ describe( 'TextureManager: multiple knapsack allocation', () => {
 
   it( 'allocates the third node correctly (bottom half)', () => {
     const node = tm.allocate( 256, 128 );
-    three = node;
     expect( node.rectangle.left ).to.equal( 0 );
     expect( node.rectangle.top ).to.equal( 128 );
     expect( node.rectangle.right ).to.equal( 256 );
@@ -187,7 +184,6 @@ describe( 'TextureManager: multiple knapsack allocation', () => {
 
   it( 'allocates the fourth node correctly', () => {
     const node = tm.allocate( 256, 128 );
-    four = node;
     expect( node.rectangle.left ).to.equal( 0 );
     expect( node.rectangle.top ).to.equal( 0 );
     expect( node.rectangle.right ).to.equal( 256 );
@@ -201,7 +197,6 @@ describe( 'TextureManager: multiple knapsack allocation', () => {
 
   it( 'allocates the fifth node correctly', () => {
     const node = tm.allocate( 200, 128 );
-    five = node;
     expect( node.rectangle.left ).to.equal( 0 );
     expect( node.rectangle.top ).to.equal( 128 );
     expect( node.rectangle.right ).to.equal( 200 );
@@ -218,7 +213,6 @@ describe( 'TextureManager: multiple knapsack allocation', () => {
 
   it( 'allocates the sixth node correctly', () => {
     const node = tm.allocate( 64, 128 );
-    six = node;
     expect( node.rectangle.left ).to.equal( 0 );
     expect( node.rectangle.top ).to.equal( 0 );
     expect( node.rectangle.right ).to.equal( 64 );
@@ -231,7 +225,7 @@ describe( 'TextureManager: multiple knapsack allocation', () => {
 
   it( 'backfilled the seventh node correctly', () => {
     const node = tm.allocate( 56, 128 );
-    seven = node;
+    seventhNode = node;
     expect( node.rectangle.left ).to.equal( 200 );
     expect( node.rectangle.top ).to.equal( 128 );
     expect( node.rectangle.right ).to.equal( 256 );
@@ -250,9 +244,8 @@ describe( 'TextureManager: multiple knapsack allocation', () => {
   });
 
   it ( 'allows for clearing and reallocating the seventh node', () => {
-    tm.release( seven );
+    tm.release( seventhNode );
     const node = tm.allocate( 56, 128 );
-    eight = node;
     expect( node.rectangle.left ).to.equal( 200 );
     expect( node.rectangle.top ).to.equal( 128 );
     expect( node.rectangle.right ).to.equal( 256 );

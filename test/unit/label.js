@@ -144,7 +144,7 @@ describe('Label: object instantiation', () => {
 });
 
 describe( 'Label: .text property and friends', () => {
-  it( `.text only allows a valid non-empty string to be set`, () => {
+  it( '.text only allows a valid non-empty string to be set', () => {
     const label = standardTestLabel();
     expect( () => { label.text = '' } ).to.throw( Error, 'No text supplied' );
     expect( () => { label.text = '        ' } ).to.throw( Error, 'No text supplied' );
@@ -154,7 +154,7 @@ describe( 'Label: .text property and friends', () => {
     expect( () => { label.text = '1' } ).to.not.throw();
   });
 
-  it( `.text marks the label as dirty when the text is updated`, () => {
+  it( '.text marks the label as dirty when the text is updated', () => {
     const label = standardTestLabel();
     expect( label ).to.have.a.property('isDirty').which.is.true;
     label.isDirty = false;
@@ -208,12 +208,12 @@ describe( 'Label: .sprite and .hasSprite', () => {
   });
 
   describe( 'getting the .sprite property', () => {
-    it( `returns a valid sprite`, () => {
+    it( 'returns a valid sprite', () => {
       expect( label ).to.have.a.property('sprite').which.is.an('object')
         .and.is.instanceOf( THREE.Sprite );
     });
 
-    it( `continues to return the same sprite`, () => {
+    it( 'continues to return the same sprite', () => {
       const sprite = label.buildSprite();
       expect( label ).to.have.a.property('sprite').which.is.an('object')
         .and.equals( sprite );
@@ -312,17 +312,13 @@ describe( 'Label: measureSprite() and drawSprite()', () => {
   it( 'measureSprite() acts on .text property', () => {
     const label = standardTestLabel();
 
-    label.text = 'Nine wide'; // 9 chars, mocked to 9 pixels
-    expect( label.measureSprite() ).to.deep.equal([
-      Math.ceil( 9 + ( label.paddingX * label.scale ) ),
-      Math.ceil( ( label.textHeight + label.paddingY ) * label.scale )
-    ]);
+    label.text = 'Nine wide';
+    const [ initialWidth, initialHeight ] = label.measureSprite();
 
-    label.text = 'Much wider than before'; // 22 chars, mocked to 22 pixels
-    expect( label.measureSprite() ).to.deep.equal([
-      Math.ceil( 22 + ( label.paddingX * label.scale ) ),
-      Math.ceil( ( label.textHeight + label.paddingY ) * label.scale )
-    ]);
+    label.text = 'Much wider than before';
+    const [ width, height ] = label.measureSprite();
+    expect( width ).to.be.above( initialWidth );
+    expect( height ).to.be.equal( initialHeight );
   });
 
   it( 'drawSprite() draws on a canvas context', () => {
@@ -375,11 +371,11 @@ describe('Label: dynamic and lazy properties', () => {
     });
 
     it( `.fontStyle can't be set directly`, () => {
-      label.fontStyle = 'XXX';
+      expect( () => { label.fontStyle = 'XXX' } ).to.throw( TypeError );
       expect(label).to.have.property('fontStyle').which.matches( new RegExp( `^\\d+px ${ label.fontFamily }` ) );
     });
 
-    it( `setting the .bold property has effect on fontStyle`, () => {
+    it( 'setting the .bold property has effect on fontStyle', () => {
       label.bold = true;
       expect(label).to.have.property('fontStyle').which.matches( new RegExp( `^Bold \\d+px ${ label.fontFamily }` ) );
       label.bold = false;
@@ -390,7 +386,7 @@ describe('Label: dynamic and lazy properties', () => {
   it( 'setting .text triggers a rebuild of the sprite if .buildSprite() is called', () => {
     expect(label).to.have.property('isDirty').to.equal( true );
 
-    const sprite = label.buildSprite();
+    label.buildSprite();
     expect(label).to.have.property('isDirty').to.equal( false );
   });
 });

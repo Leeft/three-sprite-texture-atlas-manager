@@ -1,9 +1,5 @@
 import IconLabelSymbol from '../../src/icon-label-symbol';
 
-const standardIcon = () => {
-  return new IconLabelSymbol();
-};
-
 describe('IconLabelSymbol: object instantiation', () => {
   it( 'dies without any arguments', () => {
     const fn = function() { new IconLabelSymbol(); }

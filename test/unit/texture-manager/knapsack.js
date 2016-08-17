@@ -22,7 +22,7 @@ describe( 'TextureManager → Knapsack → Rectangle:', () => {
     expect( rectangle ).to.have.a.property('Ycentre').which.equals( -0.5 );
   });
 
-  it( `a rectangle of 80x20, offset at 10,5`, () => {
+  it( 'a rectangle of 80x20, offset at 10,5', () => {
     const rectangle = new KnapsackRectangle( 10, 5, 90, 25 ); // 80 x 20
     expect( rectangle ).to.be.an('object');
     expect( rectangle ).to.be.an.instanceof( KnapsackRectangle );
@@ -75,8 +75,8 @@ describe( 'TextureManager → Knapsack → Node:', () => {
     expect( rootNode.texture ).to.have.a.property('uuid').which.equals( knapsack.rootTexture.uuid );
   });
 
-  describe( `release() works correctly`, () => {
-    it( `root node can be release()d when empty`, () => {
+  describe( 'release() works correctly', () => {
+    it( 'root node can be release()d when empty', () => {
       const fn = () => { rootNode.release() };
       rootNode.texture; // Trigger execution of the code branch which dispose of the texture
       expect( fn ).to.not.throw( Error );
@@ -89,14 +89,14 @@ describe( 'TextureManager → Knapsack → Node:', () => {
     });
   });
 
-  it( `.clear() clears the canvas`, () => {
+  it( '.clear() clears the canvas', () => {
     const clearRect = spy( rootNode.context, 'clearRect' );
     rootNode.clear();
     expect( clearRect ).to.have.been.calledWithExactly( 0, 0, rootNode.width - 1, rootNode.height - 1 );
     expect( clearRect ).to.have.been.called.once;
   });
 
-  it( `.clipContext() clips the canvas correctly`, () => {
+  it( '.clipContext() clips the canvas correctly', () => {
     const context       = rootNode.context;
     // The order in which these need to be called to correctly set the
     // clipping area is pretty rigid, so I'm quite ok testing this.
@@ -126,7 +126,7 @@ describe( 'TextureManager → Knapsack → Node:', () => {
     expect( translateSpy ).to.have.been.calledAfter( clipSpy );
   });
 
-  it( `.restoreContext() restores the canvas correctly`, () => {
+  it( '.restoreContext() restores the canvas correctly', () => {
     const restoreSpy = spy( rootNode.context, 'restore' );
     rootNode.restoreContext();
     expect( restoreSpy ).to.have.been.called.once;
@@ -135,14 +135,14 @@ describe( 'TextureManager → Knapsack → Node:', () => {
 
   // This test is a bit cheeky, raising the code coverage ... the rest
   // of the behaviour is implicitly and well tested elsewhere though.
-  it( `.allocate() renders a rectangle with debug on`, () => {
+  it( '.allocate() renders a rectangle with debug on', () => {
     const strokeRectSpy = spy( rootNode.context, 'strokeRect' );
     rootNode.knapsack.textureManager.debug = true;
-    const node = rootNode.allocate( 10, 10 );
+    rootNode.allocate( 10, 10 );
     expect( strokeRectSpy ).to.have.been.called.twice;
   });
 
-  it( `.claim() works correctly with debug off`, () => {
+  it( '.claim() works correctly with debug off', () => {
     const strokeRectSpy = spy( rootNode.context, 'strokeRect' );
     rootNode.knapsack.textureManager.debug = false;
     rootNode.claim();
@@ -150,7 +150,7 @@ describe( 'TextureManager → Knapsack → Node:', () => {
     expect( strokeRectSpy ).to.not.have.been.called;
   });
 
-  it( `.claim() works correctly with debug on`, () => {
+  it( '.claim() works correctly with debug on', () => {
     const strokeRectSpy = spy( rootNode.context, 'strokeRect' );
     rootNode.knapsack.textureManager.debug = true;
     rootNode.claim();
