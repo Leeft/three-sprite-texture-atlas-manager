@@ -93,7 +93,10 @@ gulp.task('build', [ 'lint-src', 'clean', 'docs' ], function(done) {
     $.file( umdExportFileName+'.js', umd.code, { src: true } )
       .pipe($.plumber())
       .pipe($.sourcemaps.init({ loadMaps: true }))
-      .pipe($.babel())
+      .pipe($.babel({
+        "plugins": [ "transform-es2015-modules-umd" ],
+        "moduleId": "three-sprite-atlas-texture-manager"
+      }))
       .pipe($.sourcemaps.write('./'))
       .pipe(gulp.dest(destinationFolder))
       .pipe(f)

@@ -6,36 +6,42 @@
 [![Dependency Status](https://david-dm.org/Leeft/three-sprite-texture-atlas-manager.svg)](https://david-dm.org/Leeft/three-sprite-texture-atlas-manager)
 [![devDependency Status](https://david-dm.org/Leeft/three-sprite-texture-atlas-manager/dev-status.svg)](https://david-dm.org/Leeft/three-sprite-texture-atlas-manager#info=devDependencies)
 
-A "sprite texture atlas" manager for [three.js](http://threejs.org/) r73 (and up). This module allows you to cut up a canvas into several chunks, and then assign each of these chunks to a sprite in your scene. You draw in the canvas yourself, e.g. rendering text there with the canvas context functions.
+A "sprite texture atlas" manager for [three.js](http://threejs.org/) r73 and up. This module allows you to cut up a canvas into several blocks, and then easily assign each of these blocks to a sprite in your scene. You draw in the canvas yourself, e.g. you can render words there with the canvas context functions.
 
 ![example of a generated sprite atlas](screenshots/sprite-atlas-example.png "Actual example of a generated sprite atlas")
 
-Splitting up a canvas in a texture atlas helps to maximise the use of GPU memory, as newer three.js versions are able to be tricked into sharing the texture on the GPU across sprites by making sure their `.uuid` properties do not change. You can use this library with older versions of three.js, but you would miss out on most of the GPU memory advantages.
+Splitting up a canvas in a texture atlas helps to maximise the use of GPU memory as more recent three.js versions are able to be tricked into sharing the texture on the GPU across sprites by making sure all their `.uuid` properties are identical; this library takes care of that as well. You can use this library with older versions of three.js, but you would miss out on most of the GPU memory benefits.
 
-This library makes use of [Promises](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Promise), which means that to support IE11 in your WebGL application while making use of this library you'll need a provide a polyfill.
-
-Don't let the low version number fool you: I've been using this code as part of other projects for quite a while now and it works well. It's the extraction into a separate library and new build environment that have caused me to start with a low version number.
+This library can be used either synchronously or asynchronously. If you use the async behaviour it makes use of [Promises](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Promise), and to support IE11 with the async interfaces in your WebGL application you'll also need a provide a Promise polyfill.
 
 ### Run-time requirements ###
 
-* three.js r73 or newer
-* Promise/A+ polyfill for IE11 support such as https://github.com/taylorhakes/promise-polyfill or https://github.com/jakearchibald/es6-promise
+* three.js r73 or newer: http://threejs.org/
+* For asynchronous node creation and IE11 support a Promise/A+ polyfill such as https://github.com/taylorhakes/promise-polyfill or https://github.com/jakearchibald/es6-promise is required.
 
 ### Example ###
 
-A simple canvas-only online example as per the usage example below: http://jsfiddle.net/Shiari/sbda72k9/.
+New three.js WebGL with sprites example: https://jsfiddle.net/Shiari/jzwg8ngn/
 
-Still missing from the example is how you can free and reallocate nodes, e.g. if you're changing the text in them dynamically. I'm working on an additional helper class for that.
+<script async src="//jsfiddle.net/Shiari/jzwg8ngn/embed/result/dark/"></script>
+
+
+A simple canvas-only example much like usage example below: http://jsfiddle.net/Shiari/sbda72k9/.
+
+Missing from the example is how you can free and reallocate nodes, which you would need to do if you're changing the text in them dynamically. But if all you need are text labels then have a look at the `src/label.js` and `src/icon-label.js` classes; they make it trivial. You'll need to import these as ES2015 modules as they are not currently part of the main distribution builds, and there is no documentation for them just yet. There are test scripts for them though.
 
 ### Usage ###
+
+This is an asynchronous example, and thus it makes use of Promises. The jsfiddle examples use the slightly simpler synchronous approach which does not need Promises.
 
 ```javascript
 
 // We want textures of 1024x1024 pixels (always a power of two)
 // (this assumes "globals" mode ... for ES6 or node, import or require())
 var textureManager = new window.threeSpriteAtlasTextureManager(1024);
-// Make the sprite allocation code render some blue, purple and screen
-// borders in the nodes (this helps visualisation)
+
+// Make the sprite allocation code render some blue, purple and green
+// borders in the nodes (this helps visualisation of what's going on)
 textureManager.debug = true;
 
 var words = [
@@ -85,6 +91,7 @@ words.forEach(function (text) {
         // creating your sprite. node.texture will be a cloned texture
         // ready to use, with its UV coordinates already set:
         // var material = new THREE.SpriteMaterial({ map: node.texture });
+        // node.texture.needsUpdate = true;
         // var sprite = new THREE.Sprite( material ) );
         // scene.add( sprite );
       },
@@ -104,8 +111,9 @@ Promise.all(nodes).then(function () {
 });
 
 
-// Helper: determine the width required to render the given text. You'll want
-// to use the same (relevant) settings as you would when rendering the text
+// Helper function : determine the width required to render the given text.
+// You'll need to use the same (relevant) settings as you would when
+// rendering the text
 function widthOfText(text) {
   var context = canvas.getContext('2d');
   context.font = fontStyle;
@@ -116,7 +124,7 @@ function widthOfText(text) {
 
 ### Documentation ###
 
-Please see [the API reference](docs/API.md) for the entire public interface.
+Please see [the API reference](docs/API.md) for the public interface.
 
 ### Development ###
 
@@ -157,14 +165,14 @@ $ gulp build
 
 ### TODO ###
 
-* Implement the Label helper class to make usage even easier.
-* More tests, particularly unit-tests for the internal helper modules.
 * Better usage documentation, right now it may not be obvious how to release and reallocate new nodes properly.
-* Fancier allocation algorithm, allowing to "defrag" and optimise the allocation? Would require a new method to tell the manager that the user is done adding the initial nodes, so it can start processing.
+* Documentation plus examples for the higher level `Label` and `LabelIcon` ES2015 modules.
+* Documentation layout/rendering fixes.
+* Fancier allocation algorithm for the asynchronous interface which might allow to maximise the texture allocation.
 
 ### License ###
 
-Copyright 2015 [Lianna Eeftinck](https://github.com/leeft/)
+Copyright 2015-2016 [Lianna Eeftinck](https://github.com/leeft/)
 
 MIT License
 

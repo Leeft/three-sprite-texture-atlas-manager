@@ -53,3 +53,11 @@ No functional changes since 0.1.3 (which I've neglected to document it seems).
 ### [0.2.1](https://github.com/Leeft/three-sprite-texture-atlas-manager/releases/tag/v0.2.1)
 
 - Removed obsolete (and failing build due to a `const`) travis CI build of node 0.10
+
+### [0.2.2](https://github.com/Leeft/three-sprite-texture-atlas-manager/releases/tag/v0.2.2)
+
+- Fixed UMD build, `new window.threeSpriteAtlasTextureManager(1024);` works yet again (was broken as of 0.2.0).
+- README updates:
+    - three.js Sprite example added.
+    - Asynchronous and synchronous modes mentioned.
+    - Clarified (hopefully) that IE11 only needs Promises when asynchronous allocation calls are used.
