@@ -1,4 +1,6 @@
 # Logs
+.nyc_output
+
 logs
 *.log
 
