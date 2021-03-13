@@ -23,6 +23,7 @@ class IconLabelSymbol {
 
     // Force a check for these important properties
     [ `code`, `scale`, `offset` ].forEach( prop => {
+      // eslint-disable-next-line no-self-assign
       this[ prop ] = this[ prop ];
     });
   }

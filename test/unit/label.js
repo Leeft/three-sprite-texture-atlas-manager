@@ -160,6 +160,7 @@ describe( 'Label: .text property and friends', () => {
     label.isDirty = false;
     expect( label ).to.have.a.property('isDirty').which.is.false;
     // Stays false after setting the text to itself
+    // eslint-disable-next-line no-self-assign
     label.text = label.text;
     expect( label ).to.have.a.property('isDirty').which.is.false;
     label.text = label.text + ' updated';

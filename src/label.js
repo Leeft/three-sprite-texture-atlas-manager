@@ -23,6 +23,7 @@ class Label {
 
     // Force a check for these important properties
     [ `textureManager`, `text` ].forEach( prop => {
+      // eslint-disable-next-line no-self-assign
       this[ prop ] = this[ prop ];
     });
   }
