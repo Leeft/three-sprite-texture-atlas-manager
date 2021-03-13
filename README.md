@@ -5,7 +5,7 @@
 [![Dependency Status](https://david-dm.org/Leeft/three-sprite-texture-atlas-manager.svg)](https://david-dm.org/Leeft/three-sprite-texture-atlas-manager)
 [![devDependency Status](https://david-dm.org/Leeft/three-sprite-texture-atlas-manager/dev-status.svg)](https://david-dm.org/Leeft/three-sprite-texture-atlas-manager#info=devDependencies)
 
-A "sprite texture atlas" manager for [three.js](http://threejs.org/) (technically r73 and up, but you should use v125 and up: [CVE-2020-28496](https://github.com/advisories/GHSA-fq6p-x6j3-cmmq)). This module helps you to dynamically manage sprites that are shared across as many canvases as needed, and you and assign each of these fragments of the texture to an individual sprite in your scene. You draw in the canvas yourself, e.g. you can render words there with all the canvas context functions, this module reduces the VRAM usage and makes sprite assignment trivial.
+A "sprite texture atlas" manager for [three.js](http://threejs.org/) (technically r73 and up, but do use v125 and up: [CVE-2020-28496](https://github.com/advisories/GHSA-fq6p-x6j3-cmmq)). This module helps you to dynamically manage sprites that are shared across as many canvases as are dynamically needed, and you and easily assign these fragments of the texture to individual sprites in your scene. You can also draw in the canvas yourself; you render text or draw with the canvas context functions.
 
 
 ![example of a generated sprite atlas](screenshots/sprite-atlas-example.png "Actual example of a generated sprite atlas")
@@ -127,7 +127,7 @@ Please see [the API reference](docs/API.md) for the public interface.
 
 ### Development ###
 
-Install node.js (on Linux I recommend highly [nvm](https://github.com/creationix/nvm) for that) and check out the repository. Then:
+Install a reasonably modern version of node.js (on Linux I highly recommend [nvm](https://github.com/creationix/nvm) for managing your node installations) and check out the repository. Then:
 
 ```bash
 $ npm install -g gulp
@@ -164,7 +164,7 @@ $ gulp build
 
 ### TODO ###
 
-I don't use this module myself at the moment, so PR's are welcome.
+I don't use this module myself at the moment, so further development on this isn't happening. PR's are welcome.
 
 * Better usage documentation, right now it may not be obvious how to release and reallocate new nodes properly.
 * Documentation plus examples for the higher level `Label` and `LabelIcon` ES2015 modules.
