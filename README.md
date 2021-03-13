@@ -122,10 +122,9 @@ Please see [the API reference](docs/API.md) for the public interface.
 
 ### Development ###
 
-Install a reasonably modern version of node.js (on Linux I highly recommend [nvm](https://github.com/creationix/nvm) for managing your node installations) and check out the repository. Then:
+Install a reasonably modern version of node.js such as v12 or up (on Linux I highly recommend [nvm](https://github.com/creationix/nvm) for managing your node installations) and check out this repository. Then:
 
 ```bash
-$ npm install -g gulp
 $ cd three-sprite-texture-atlas-manager/
 $ npm install
 ```
@@ -135,25 +134,31 @@ Now your environment should be entirely set up, and the commands below should ru
 To run the tests:
 
 ```bash
-$ gulp test
+$ npm run test
 ```
 
-For a test coverage report:
+To run the tests while waiting for changes to any files, re-running the tests:
 
 ```bash
-$ gulp coverage
+$ npm run watch
+```
+
+For a test coverage report (the actual coverage report may or may not work correctly yet):
+
+```bash
+$ npm run coverage
 ```
 
 Build the documentation:
 
 ```bash
-$ gulp docs
+$ npm run docs
 ```
 
 Build the libraries in the `dist/` folder:
 
 ```bash
-$ gulp build
+$ npm run build
 ```
 
 
