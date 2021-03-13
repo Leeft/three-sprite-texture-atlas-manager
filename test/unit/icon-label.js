@@ -1,7 +1,11 @@
-import IconLabel from '../../src/icon-label';
-import IconLabelSymbol from '../../src/icon-label-symbol';
-import TextureManager from '../../src/texture-manager';
-import KnapsackNode from '../../src/texture-manager/knapsack/node';
+import { expect } from 'chai';
+import sinon from 'sinon/pkg/sinon.js';
+import assert from 'assert';
+import IconLabel from '../../src/icon-label.js';
+import IconLabelSymbol from '../../src/icon-label-symbol.js';
+import TextureManager from '../../src/texture-manager.js';
+import KnapsackNode from '../../src/texture-manager/knapsack/node.js';
+import * as THREE from 'three/build/three.js';
 
 const standardTestLabel = () => {
   return new IconLabel({
@@ -266,29 +270,28 @@ describe( 'IconLabel: .sprite property', () => {
   it( 'clips and restores the canvas context when drawing', () => {
     const node = label.node;
 
-    const clipSpy = spy( node, 'clipContext' );
-    const drawSpy = spy( label, 'drawSprite' );
-    const restoreSpy = spy( node, 'restoreContext' );
+    const contextSpy = sinon.spy( node );
+    const labelSpy = sinon.spy( label );
 
     label.redraw();
 
-    expect( clipSpy ).to.have.been.called.once;
-    expect( drawSpy ).to.have.been.called.once;
-    expect( restoreSpy ).to.have.been.called.once;
+    assert( contextSpy.clipContext.calledOnce );
+    assert( contextSpy.restoreContext.calledOnce );
+    assert( labelSpy.drawSprite.calledOnce );
   });
 
   it( 'restores the canvas context when an error is thrown while drawing', () => {
     const node = label.node;
-
-    const stubbed = stub( label, 'drawSprite', () => { throw new Error( 'kaboom' ) } );
-    const clipSpy = spy( node, 'clipContext' );
-    const restoreSpy = spy( node, 'restoreContext' );
+    const contextSpy = sinon.spy( node );
+    const stubbed = sinon.stub( label, 'drawSprite' ).callsFake( () => { throw new Error( 'kaboom' ); } );
 
     expect( () => { label.redraw() } ).to.throw( Error, 'kaboom' );
 
-    expect( clipSpy ).to.have.been.called.once;
-    expect( stubbed ).to.have.been.called.once;
-    expect( restoreSpy ).to.have.been.called.once;
+    assert( contextSpy.clipContext.calledOnce );
+    assert( contextSpy.restoreContext.calledOnce );
+    //assert( stubbed.drawSprite.calledOnce );
+
+    stubbed.restore();
   });
 });
 
@@ -355,25 +358,22 @@ describe( 'IconLabel: measureSprite() and drawSprite()', () => {
 
   it( 'drawSprite() draws on a canvas context', () => {
     const label = standardTestLabel();
+    const canvas = document.createElement('canvas');
+    const context = canvas.getContext('2d');
 
-    const fakeContext = stub({
-      scale: function() {},
-      fillText: function() {},
-      strokeText: function() {},
-      clearRect: function() {},
-      rect: function() {},
-      stroke: function() {},
-      beginPath: function() {},
-      closePath: function() {},
-    });
+    const fillTextSpy = sinon.spy( context, 'fillText' );
+    const strokeTextSpy = sinon.spy( context, 'strokeText' );
 
-    label.drawSprite( fakeContext, { width: 100, height: 90 } );
+    label.drawSprite( context, { width: 100, height: 90 } );
+
+    assert( fillTextSpy.withArgs( label.text, 0, label.textVerticalOffset * label.scale ) );
+    assert( strokeTextSpy.withArgs( label.text, 0, label.textVerticalOffset * label.scale ) );
 
     // XXX: Should we test that certain properties have been set?
     // That might be too much implementation detail though
-    expect( fakeContext.scale ).to.not.have.been.called;
-    expect( fakeContext.fillText ).to.have.been.calledWithExactly( label.text, 0, label.textVerticalOffset * label.scale );
-    expect( fakeContext.strokeText ).to.have.been.calledWithExactly( label.text, 0, label.textVerticalOffset * label.scale );
+
+    context.strokeText.restore();
+    context.fillText.restore();
   });
 });
 
