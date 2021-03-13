@@ -69,5 +69,6 @@ Security update for the build process.
 - No functional changes in the library.
 - Build process overhauled, even more integration of ES2015+ features from node and tooling.
 - Now using all latest versions of packages; packages deemed a security problem removed or updated (particularly three.js).
+- Removed travis, can't be bothered setting up a different CI.
 
 If you're simply a user of this package none of this is likely to affect you (particularly in the ES2015+/ES6 build) as my library is standalone and uses none of these directly; it's up to you to include three.js yourself.

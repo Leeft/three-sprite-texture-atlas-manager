@@ -1,6 +1,5 @@
 ### three-sprite-texture-atlas-manager ###
 
-[![Travis build status](http://img.shields.io/travis/Leeft/three-sprite-texture-atlas-manager.svg?style=flat)](https://travis-ci.org/Leeft/three-sprite-texture-atlas-manager)
 [![Code Climate](https://codeclimate.com/github/Leeft/three-sprite-texture-atlas-manager/badges/gpa.svg)](https://codeclimate.com/github/Leeft/three-sprite-texture-atlas-manager)
 [![Test Coverage](https://codeclimate.com/github/Leeft/three-sprite-texture-atlas-manager/badges/coverage.svg)](https://codeclimate.com/github/Leeft/three-sprite-texture-atlas-manager/coverage)
 [![Dependency Status](https://david-dm.org/Leeft/three-sprite-texture-atlas-manager.svg)](https://david-dm.org/Leeft/three-sprite-texture-atlas-manager)
@@ -20,15 +19,11 @@ This library can be used either synchronously or asynchronously. If you use the 
 * three.js r126 or newer: http://threejs.org/
 * For asynchronous node creation and IE11 support a Promise/A+ polyfill such as https://github.com/taylorhakes/promise-polyfill or https://github.com/jakearchibald/es6-promise is required.
 
-### Example ###
+### Examples ###
 
-New three.js WebGL with sprites example: https://jsfiddle.net/Shiari/jzwg8ngn/
+WebGL with sprites example: https://jsfiddle.net/Shiari/jzwg8ngn/.
 
-<script async src="//jsfiddle.net/Shiari/jzwg8ngn/embed/result/"></script>
-
-A simple canvas-only example much like usage example below: https://jsfiddle.net/Shiari/sbda72k9/.
-
-<script async src="//jsfiddle.net/Shiari/sbda72k9/embed/result/"></script>
+Canvas-only example much like the usage example below: https://jsfiddle.net/Shiari/sbda72k9/.
 
 Missing from these example is how you can more dynamically free and reallocate nodes, which you would need to do if you're changing the text in them dynamically. But if all you need are text labels then have a look at the `src/label.js` and `src/icon-label.js` classes; they make it trivial. You'll need to import these as ES2015+ modules as they are not part of the main distribution builds, and there is no documentation for them just yet. There are test scripts for them though.
 
