@@ -11,6 +11,7 @@ import { rollup } from 'rollup';
 import { terser } from 'rollup-plugin-terser';
 import { babel } from '@rollup/plugin-babel';
 import resolve from '@rollup/plugin-node-resolve';
+import shell from 'gulp-shell';
 
 // Gather the library data from package.json rather than
 // hardcoding the destination paths in this gulpfile.
@@ -49,11 +50,11 @@ export const clean = () => del([ destinationFolder ]);
 
 // Linting
 
-export function lint_src() {
+function lint_src() {
   return lintFiles([ 'src/**/*.js' ]);
 }
 
-export function lint_test() {
+function lint_test() {
   return lintFiles([ 'test/unit/**/*.js' ]);
 }
 
@@ -84,6 +85,9 @@ export function watch() {
 
 // Coverage
 
+gulp.task( 'coverage', shell.task( 'nyc mocha' ) );
+
+//
 //function coverage() {
 //  return gulp.series( lintSrc, lintTest );
 //    gulp.src([
