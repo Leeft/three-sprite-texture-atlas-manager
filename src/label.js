@@ -1,3 +1,4 @@
+import * as THREE from 'three/build/three.js';
 //import TextureManager from './texture-manager';
 
 const DEFAULTS = {

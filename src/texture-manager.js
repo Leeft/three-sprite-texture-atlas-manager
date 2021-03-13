@@ -23,7 +23,7 @@ var textureManager = new window.threeSpriteAtlasTextureManager();
  *
  */
 
-import Knapsack from './texture-manager/knapsack';
+import Knapsack from './texture-manager/knapsack.js';
 
 /**
   * @constructor

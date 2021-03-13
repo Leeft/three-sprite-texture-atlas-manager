@@ -62,10 +62,12 @@
     "rollup": "^0.34.9",
     "sinon": "^1.12.2",
     "sinon-chai": "^2.7.0",
-    "three": ">=0.73.0 <=0.79.0",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.0.0",
     "watchify": "^3.6.1"
+  },
+  "dependencies": {
+    "three": "^0.126.1"
   },
   "babelBoilerplateOptions": {
     "entryFileName": "three-sprite-texture-atlas-manager",
