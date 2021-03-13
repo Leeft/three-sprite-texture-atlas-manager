@@ -1,10 +1,5 @@
 ### three-sprite-texture-atlas-manager ###
 
-[![Code Climate](https://codeclimate.com/github/Leeft/three-sprite-texture-atlas-manager/badges/gpa.svg)](https://codeclimate.com/github/Leeft/three-sprite-texture-atlas-manager)
-[![Test Coverage](https://codeclimate.com/github/Leeft/three-sprite-texture-atlas-manager/badges/coverage.svg)](https://codeclimate.com/github/Leeft/three-sprite-texture-atlas-manager/coverage)
-[![Dependency Status](https://david-dm.org/Leeft/three-sprite-texture-atlas-manager.svg)](https://david-dm.org/Leeft/three-sprite-texture-atlas-manager)
-[![devDependency Status](https://david-dm.org/Leeft/three-sprite-texture-atlas-manager/dev-status.svg)](https://david-dm.org/Leeft/three-sprite-texture-atlas-manager#info=devDependencies)
-
 A "sprite texture atlas" manager for [three.js](http://threejs.org/) (technically r73 and up, but do use v125 and up: [CVE-2020-28496](https://github.com/advisories/GHSA-fq6p-x6j3-cmmq)). This module helps you to dynamically manage sprites that are shared across as many canvases as are dynamically needed, and you and easily assign these fragments of the texture to individual sprites in your scene. You can also draw in the canvas yourself; you render text or draw with the canvas context functions.
 
 
