@@ -61,3 +61,13 @@ No functional changes since 0.1.3 (which I've neglected to document it seems).
     - three.js Sprite example added.
     - Asynchronous and synchronous modes mentioned.
     - Clarified (hopefully) that IE11 only needs Promises when asynchronous allocation calls are used.
+
+### [0.3.0](https://github.com/Leeft/three-sprite-texture-atlas-manager/releases/tag/v0.3.0)
+
+Security update for the build process.
+
+- No functional changes in the library.
+- Build process overhauled, even more integration of ES2015+ features from node and tooling.
+- Now using all latest versions of packages; packages deemed a security problem removed or updated (particularly three.js).
+
+If you're simply a user of this package none of this is likely to affect you (particularly in the ES2015+/ES6 build) as my library is standalone and uses none of these directly; it's up to you to include three.js yourself.
