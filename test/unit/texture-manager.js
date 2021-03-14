@@ -1,4 +1,6 @@
-import TextureManager from '../../src/texture-manager';
+import { expect, assert, should } from "chai";
+import sinon from 'sinon/pkg/sinon.js';
+import TextureManager from '../../src/texture-manager.js';
 
 describe( 'TextureManager: constructor behaves correctly', () => {
   it( 'instantiates correctly', () => {
@@ -32,28 +34,36 @@ describe( 'TextureManager: constructor behaves correctly', () => {
 });
 
 describe( 'TextureManager: the debug code works', () => {
-  const tm = new TextureManager( 256 );
-  tm.debug = true; // Make sure debug code goes through testing
-  let knapsack;
+  let tm, logStub, knapsack;
+
+  beforeEach( () => {
+    tm = new TextureManager( 256 );
+    tm.debug = true; // Make sure debug code goes through testing
+    logStub = sinon.stub( console, 'log' );
+    knapsack = tm._addKnapsack( 256 );
+  });
+
+  afterEach( () => {
+    logStub.restore();
+  });
 
   it( 'Logs about knapsack creation', () => {
-    const logStub = stub( console, 'log' );
-    knapsack = tm._addKnapsack( 256 );
-    expect( logStub ).to.have.been.calledWithExactly( 'TextureManager: allocated 256px texture map #1' );
+    assert( logStub.calledWith( 'TextureManager: allocated 256px texture map #1' ) );
     tm._addKnapsack( 256 );
-    expect( logStub ).to.have.been.calledWithExactly( 'TextureManager: allocated 256px texture map #2' );
+    assert( logStub.calledWith( 'TextureManager: allocated 256px texture map #2' ) );
   });
 
   it( 'Can still allocate a node correctly, and draws outlines in it', () => {
     // Slightly more extensive tests of this drawing done elsewhere
-    const strokeRectSpy = spy( knapsack.rootNode.context, 'strokeRect' );
+    const strokeRectSpy = sinon.spy( knapsack.rootNode.context, 'strokeRect' );
     const node = tm.allocate( 256, 128 );
     expect( node.rectangle.left ).to.equal( 0 );
     expect( node.rectangle.top ).to.equal( 0 );
     expect( node.rectangle.right ).to.equal( 256 );
     expect( node.rectangle.bottom ).to.equal( 128 );
     expect( node.uvCoordinates() ).to.deep.equal( [ 0, 0.5, 1, 1 ] );
-    expect( strokeRectSpy ).to.have.been.called;
+    assert( strokeRectSpy.called );
+    strokeRectSpy.restore();
   });
 });
 
@@ -64,26 +74,50 @@ describe( 'TextureManager: the generator for allocateASync() and solveASync() wo
     expect( () => { tm.solveASync() } ).to.throw( Error, `hasn't been set up` );
   });
 
-  it( 'Can allocate nodes asynchronously', () => {
+  it( 'Can allocate nodes asynchronously', ( done ) => {
     tm.allocateASync( 128, 32 );
     tm.allocateASync( 32364, 323432 );
     tm.allocateASync( 64, 32 );
     // Note: the failing 2nd node is not a problem as it fails
     // early and returns its failure to the caller directly.
-    const solve = tm.solveASync();
-    return expect( solve ).to.eventually.resolve;
+    tm.solveASync().then(
+      ( /* result */ ) => {
+        done();
+      },
+      ( err ) => {
+        done( err );
+      }
+    );
   });
 
-  it( 'Handles allocation failure, rejecting on the caller', () => {
-    const failing = tm.allocateASync( 323643, 3234323 );
-    return expect( failing ).to.eventually.be.rejectedWith( Error, 'too large' );
+  it( 'Handles allocation failure, rejecting on the caller', ( done ) => {
+    tm.allocateASync( 323643, 3234323 ).then(
+      ( /* result */ ) => {
+        assert( false ); // This should not be called
+        done();
+      },
+      ( err ) => {
+        try {
+          expect( err.message ).to.include( 'too large' );
+          done();
+        } catch ( e ) {
+          done( e );
+        }
+      }
+    );
   });
 
-  it( 'Handles 100% allocation failure, rejecting on .solveASync()', () => {
+  it( 'Handles 100% allocation failure, rejecting on .solveASync()', ( done ) => {
     tm.allocateASync( 323643, 3234323 );
     tm.allocateASync( 323643, 3234323 );
-    const solve = tm.solveASync();
-    return expect( solve ).to.eventually.resolve;
+    tm.solveASync().then(
+      ( /* result */ ) => {
+        done();
+      },
+      ( err ) => {
+        done( err );
+      }
+    );
   });
 });
 
@@ -92,15 +126,29 @@ describe( 'TextureManager: multiple knapsack allocation', () => {
   let seventhNode;
 
   it( 'is safe to call release without a node', () => {
-    expect( tm.release() ).to.equal.undefined;
+    const node = tm.release();
+    should().not.exist( node );
   });
 
   it( 'has no knapsacks to start with', () => {
     expect( tm.knapsacks.length ).to.equal( 0 );
   });
 
-  it( 'fails to allocates a node too large (horizontally) asynchronously', () => {
-    return expect( tm.allocateNode( tm.textureSize + 1, 1 ) ).to.eventually.be.rejectedWith( Error, 'too large' );
+  it( 'fails to allocates a node too large (horizontally) asynchronously', ( done ) => {
+    tm.allocateNode( tm.textureSize + 1, 1 ).then(
+      ( /* result */ ) => {
+        assert( false ); // This should not be called
+        done();
+      },
+      ( err ) => {
+        try {
+          expect( err.message ).to.include( 'too large' );
+          done();
+        } catch ( e ) {
+          done( e );
+        }
+      }
+    );
   });
 
   it( 'fails to allocates a node too large (horizontally)', () => {
@@ -111,8 +159,21 @@ describe( 'TextureManager: multiple knapsack allocation', () => {
     expect( tm.knapsacks.length ).to.equal( 0 );
   });
 
-  it( 'fails to allocates a node too large (vertically) asynchronously', () => {
-    return expect( tm.allocateNode( 1, tm.textureSize + 1 ) ).to.eventually.be.rejectedWith( Error, 'too large' );
+  it( 'fails to allocates a node too large (vertically) asynchronously', ( done ) => {
+    tm.allocateNode( 1, tm.textureSize + 1 ).then(
+      ( /* result */ ) => {
+        assert( false ); // This should not be called
+        done();
+      },
+      ( err ) => {
+        try {
+          expect( err.message ).to.include( 'too large' );
+          done();
+        } catch ( e ) {
+          done( e );
+        }
+      }
+    );
   });
 
   it( 'fails to allocates a node too large (vertically)', () => {

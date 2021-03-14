@@ -1,7 +1,10 @@
-import Knapsack from '../../../src/texture-manager/knapsack';
-import KnapsackNode from '../../../src/texture-manager/knapsack/node';
-import KnapsackRectangle from '../../../src/texture-manager/knapsack/rectangle';
-import TextureManager from '../../../src/texture-manager';
+import { expect, assert } from "chai";
+import sinon from 'sinon/pkg/sinon.js';
+import Knapsack from '../../../src/texture-manager/knapsack.js';
+import KnapsackNode from '../../../src/texture-manager/knapsack/node.js';
+import KnapsackRectangle from '../../../src/texture-manager/knapsack/rectangle.js';
+import TextureManager from '../../../src/texture-manager.js';
+import * as THREE from 'three/build/three.js';
 
 describe( 'TextureManager → Knapsack → Rectangle:', () => {
   it( `without parameters it's a 0x0 rectangle`, () => {
@@ -38,12 +41,17 @@ describe( 'TextureManager → Knapsack → Rectangle:', () => {
 });
 
 describe( 'TextureManager → Knapsack → Node:', () => {
-  let tm, knapsack, rootNode;
+  let tm, knapsack, rootNode, strokeRectSpy;
 
   beforeEach( () => {
     tm = new TextureManager( 256 );
     knapsack = new Knapsack( tm, tm.textureSize );
     rootNode = knapsack.rootNode;
+    strokeRectSpy = sinon.spy( rootNode.context, 'strokeRect' );
+  });
+
+  afterEach( () => {
+    strokeRectSpy.restore();
   });
 
   it( 'basic root node behaviour', () => {
@@ -90,10 +98,11 @@ describe( 'TextureManager → Knapsack → Node:', () => {
   });
 
   it( '.clear() clears the canvas', () => {
-    const clearRect = spy( rootNode.context, 'clearRect' );
+    const clearRect = sinon.spy( rootNode.context, 'clearRect' );
     rootNode.clear();
-    expect( clearRect ).to.have.been.calledWithExactly( 0, 0, rootNode.width - 1, rootNode.height - 1 );
-    expect( clearRect ).to.have.been.called.once;
+    assert( clearRect.calledWith( 0, 0, rootNode.width - 1, rootNode.height - 1 ) );
+    assert( clearRect.calledOnce );
+    clearRect.restore();
   });
 
   it( '.clipContext() clips the canvas correctly', () => {
@@ -103,60 +112,63 @@ describe( 'TextureManager → Knapsack → Node:', () => {
     // Also, we're clipping just shy of the edge as textures can
     // "bleed" into the next one (due to the way shaders sample).
     // TODO: Maybe this can be shortened a bit
-    const saveSpy      = spy( context, 'save' );
-    const beginPathSpy = spy( context, 'beginPath' );
-    const rectSpy      = spy( context, 'rect' );
-    const clipSpy      = spy( context, 'clip' );
-    const translateSpy = spy( context, 'translate' );
+    const saveSpy      = sinon.spy( context, 'save' );
+    const beginPathSpy = sinon.spy( context, 'beginPath' );
+    const rectSpy      = sinon.spy( context, 'rect' );
+    const clipSpy      = sinon.spy( context, 'clip' );
+    const translateSpy = sinon.spy( context, 'translate' );
     rootNode.clipContext();
-    expect( saveSpy ).to.have.been.called.once;
-    expect( saveSpy ).to.have.been.calledWithExactly();
-    expect( saveSpy ).to.have.been.calledBefore( beginPathSpy );
-    expect( beginPathSpy ).to.have.been.called.once;
-    expect( beginPathSpy ).to.have.been.calledWithExactly();
-    expect( beginPathSpy ).to.have.been.calledBefore( rectSpy );
-    expect( rectSpy ).to.have.been.called.once;
-    expect( rectSpy ).to.have.been.calledBefore( clipSpy );
-    expect( rectSpy ).to.have.been.calledWithExactly( rootNode.rectangle.left + 1, rootNode.rectangle.top + 1, rootNode.width - 2, rootNode.height - 2 );
-    expect( clipSpy ).to.have.been.called.once;
-    expect( clipSpy ).to.have.been.calledWithExactly();
-    expect( clipSpy ).to.have.been.calledBefore( translateSpy );
-    expect( translateSpy ).to.have.been.called.once;
-    expect( translateSpy ).to.have.been.calledWithExactly( rootNode.rectangle.Xcentre, rootNode.rectangle.Ycentre );
-    expect( translateSpy ).to.have.been.calledAfter( clipSpy );
+    assert( saveSpy.calledOnce );
+    assert( saveSpy.calledWith() )
+    assert( saveSpy.calledBefore( beginPathSpy ) );
+    assert( beginPathSpy.calledOnce );
+    assert( beginPathSpy.calledWith() );
+    assert( beginPathSpy.calledBefore( rectSpy ) );
+    assert( rectSpy.calledOnce );
+    assert( rectSpy.calledBefore( clipSpy ) );
+    assert( rectSpy.calledWith( rootNode.rectangle.left + 1, rootNode.rectangle.top + 1, rootNode.width - 2, rootNode.height - 2 ) );
+    assert( clipSpy.calledOnce );
+    assert( clipSpy.calledWith() );
+    assert( clipSpy.calledBefore( translateSpy ) );
+    assert( translateSpy.calledOnce );
+    assert( translateSpy.calledWith( rootNode.rectangle.Xcentre, rootNode.rectangle.Ycentre ) );
+    assert( translateSpy.calledAfter( clipSpy ) );
+    translateSpy.restore();
+    clipSpy.restore();
+    rectSpy.restore();
+    beginPathSpy.restore();
+    saveSpy.restore();
   });
 
   it( '.restoreContext() restores the canvas correctly', () => {
-    const restoreSpy = spy( rootNode.context, 'restore' );
+    const restoreSpy = sinon.spy( rootNode.context, 'restore' );
     rootNode.restoreContext();
-    expect( restoreSpy ).to.have.been.called.once;
-    expect( restoreSpy ).to.have.been.calledWithExactly();
+    expect( restoreSpy.calledOnceWith() ).to.be.true;
+    restoreSpy.restore();
   });
 
   // This test is a bit cheeky, raising the code coverage ... the rest
   // of the behaviour is implicitly and well tested elsewhere though.
   it( '.allocate() renders a rectangle with debug on', () => {
-    const strokeRectSpy = spy( rootNode.context, 'strokeRect' );
     rootNode.knapsack.textureManager.debug = true;
     rootNode.allocate( 10, 10 );
-    expect( strokeRectSpy ).to.have.been.called.twice;
+    assert( strokeRectSpy.called );
+    expect( strokeRectSpy.callCount ).to.be.at.least( 2 );
   });
 
   it( '.claim() works correctly with debug off', () => {
-    const strokeRectSpy = spy( rootNode.context, 'strokeRect' );
     rootNode.knapsack.textureManager.debug = false;
     rootNode.claim();
-    expect( rootNode ).to.have.a.property('imageID').to.match( /^[a-z0-9\-]+$/i );
-    expect( strokeRectSpy ).to.not.have.been.called;
+    expect( rootNode ).to.have.a.property('imageID').to.match( /^[a-z0-9-]+$/i );
+    assert( strokeRectSpy.notCalled );
   });
 
   it( '.claim() works correctly with debug on', () => {
-    const strokeRectSpy = spy( rootNode.context, 'strokeRect' );
     rootNode.knapsack.textureManager.debug = true;
     rootNode.claim();
-    expect( rootNode ).to.have.a.property('imageID').to.match( /^[a-z0-9\-]+$/i );
-    expect( strokeRectSpy ).to.have.been.called.once;
-    expect( strokeRectSpy ).to.have.been.calledWithExactly( rootNode.rectangle.left + 0.5, rootNode.rectangle.top + 0.5, rootNode.width - 1, rootNode.height - 1 );
+    expect( rootNode ).to.have.a.property('imageID').to.match( /^[a-z0-9-]+$/i );
+    assert( strokeRectSpy.calledOnce );
+    assert( strokeRectSpy.calledWith( rootNode.rectangle.left + 0.5, rootNode.rectangle.top + 0.5, rootNode.width - 1, rootNode.height - 1 ) );
   });
 });
 

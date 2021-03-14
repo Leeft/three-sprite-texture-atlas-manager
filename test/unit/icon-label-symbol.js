@@ -1,4 +1,6 @@
-import IconLabelSymbol from '../../src/icon-label-symbol';
+import { expect } from "chai";
+import IconLabelSymbol from '../../src/icon-label-symbol.js';
+import * as THREE from 'three/build/three.js';
 
 describe('IconLabelSymbol: object instantiation', () => {
   it( 'dies without any arguments', () => {

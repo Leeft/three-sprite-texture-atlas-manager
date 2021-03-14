@@ -1,4 +1,4 @@
-import Label from './label';
+import Label from './label.js';
 
 class IconLabel extends Label {
   constructor({

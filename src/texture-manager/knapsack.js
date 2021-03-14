@@ -4,7 +4,8 @@ Represents a single texture atlas with several sprites and its corresponding bas
 @module texture-manager/knapsack
  */
 
-import KnapsackNode from './knapsack/node';
+import * as THREE from 'three/build/three.js';
+import KnapsackNode from './knapsack/node.js';
 
 /**
   * @constructor

@@ -1,3 +1,4 @@
+import * as THREE from 'three/build/three.js';
 //import TextureManager from './texture-manager';
 
 const DEFAULTS = {
@@ -22,6 +23,7 @@ class Label {
 
     // Force a check for these important properties
     [ `textureManager`, `text` ].forEach( prop => {
+      // eslint-disable-next-line no-self-assign
       this[ prop ] = this[ prop ];
     });
   }

@@ -1,8 +1,4 @@
-module.exports = function() {
-  global.expect = global.chai.expect;
-
-  global.THREE = require('three');
-
+export async function mochaGlobalSetup() {
   const context = {
     clearRect: function() {},
     save: function() {},
@@ -38,18 +34,4 @@ module.exports = function() {
       throw new Error(`This simple mock doesn't know element type ${ name }`);
     }
   };
-
-  beforeEach( function() {
-    this.sandbox = global.sinon.sandbox.create();
-    global.stub = this.sandbox.stub.bind(this.sandbox);
-    global.spy = this.sandbox.spy.bind(this.sandbox);
-    global.mock = this.sandbox.mock.bind(this.sandbox);
-  });
-
-  afterEach( function() {
-    delete global.stub;
-    delete global.spy;
-    delete global.mock;
-    this.sandbox.restore();
-  });
-};
+}

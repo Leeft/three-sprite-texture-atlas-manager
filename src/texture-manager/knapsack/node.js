@@ -19,7 +19,8 @@ tetureManager.allocateNode( 100, 20 ).then(
 );
 */
 
-import KnapsackRectangle from './rectangle';
+import * as THREE from 'three/build/three.js';
+import KnapsackRectangle from './rectangle.js';
 
 /**
  * Do not use this directly, it is managed for you.

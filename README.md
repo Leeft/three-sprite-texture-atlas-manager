@@ -1,38 +1,32 @@
 ### three-sprite-texture-atlas-manager ###
 
-[![Travis build status](http://img.shields.io/travis/Leeft/three-sprite-texture-atlas-manager.svg?style=flat)](https://travis-ci.org/Leeft/three-sprite-texture-atlas-manager)
-[![Code Climate](https://codeclimate.com/github/Leeft/three-sprite-texture-atlas-manager/badges/gpa.svg)](https://codeclimate.com/github/Leeft/three-sprite-texture-atlas-manager)
-[![Test Coverage](https://codeclimate.com/github/Leeft/three-sprite-texture-atlas-manager/badges/coverage.svg)](https://codeclimate.com/github/Leeft/three-sprite-texture-atlas-manager/coverage)
-[![Dependency Status](https://david-dm.org/Leeft/three-sprite-texture-atlas-manager.svg)](https://david-dm.org/Leeft/three-sprite-texture-atlas-manager)
-[![devDependency Status](https://david-dm.org/Leeft/three-sprite-texture-atlas-manager/dev-status.svg)](https://david-dm.org/Leeft/three-sprite-texture-atlas-manager#info=devDependencies)
+A "sprite texture atlas" manager for [three.js](http://threejs.org/) (technically r73 and up, but do use v125 and up: [CVE-2020-28496](https://github.com/advisories/GHSA-fq6p-x6j3-cmmq)). This module helps you to dynamically manage sprites that are shared across as many canvases as are dynamically needed, and you and easily assign these fragments of the texture to individual sprites in your scene. You can also draw in the canvas yourself; you render text or draw with the canvas context functions.
 
-A "sprite texture atlas" manager for [three.js](http://threejs.org/) r73 and up. This module allows you to cut up a canvas into several blocks, and then easily assign each of these blocks to a sprite in your scene. You draw in the canvas yourself, e.g. you can render words there with the canvas context functions.
 
 ![example of a generated sprite atlas](screenshots/sprite-atlas-example.png "Actual example of a generated sprite atlas")
 
-Splitting up a canvas in a texture atlas helps to maximise the use of GPU memory as more recent three.js versions are able to be tricked into sharing the texture on the GPU across sprites by making sure all their `.uuid` properties are identical; this library takes care of that as well. You can use this library with older versions of three.js, but you would miss out on most of the GPU memory benefits.
+Splitting up a canvas in a texture atlas helps to maximise the use of GPU memory as more recent three.js versions are able to be tricked into sharing the texture on the GPU across sprites by making sure all their `.uuid` properties are identical; this library takes care of that as well.
 
-This library can be used either synchronously or asynchronously. If you use the async behaviour it makes use of [Promises](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Promise), and to support IE11 with the async interfaces in your WebGL application you'll also need a provide a Promise polyfill.
+This library can be used either synchronously or asynchronously. If you use the async behaviour it makes use of [Promises](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Promise), and to support IE11 with the async interfaces in your WebGL application you'll also need a provide a Promise polyfill. But really, IE11?
 
 ### Run-time requirements ###
 
-* three.js r73 or newer: http://threejs.org/
+* three.js r126 or newer: http://threejs.org/
 * For asynchronous node creation and IE11 support a Promise/A+ polyfill such as https://github.com/taylorhakes/promise-polyfill or https://github.com/jakearchibald/es6-promise is required.
 
-### Example ###
+### Examples ###
 
-New three.js WebGL with sprites example: https://jsfiddle.net/Shiari/jzwg8ngn/
+WebGL with sprites example: https://jsfiddle.net/Shiari/jzwg8ngn/.
 
-<script async src="//jsfiddle.net/Shiari/jzwg8ngn/embed/result/dark/"></script>
+Canvas-only example much like the usage example below: https://jsfiddle.net/Shiari/sbda72k9/.
 
-
-A simple canvas-only example much like usage example below: http://jsfiddle.net/Shiari/sbda72k9/.
-
-Missing from the example is how you can free and reallocate nodes, which you would need to do if you're changing the text in them dynamically. But if all you need are text labels then have a look at the `src/label.js` and `src/icon-label.js` classes; they make it trivial. You'll need to import these as ES2015 modules as they are not currently part of the main distribution builds, and there is no documentation for them just yet. There are test scripts for them though.
+Missing from these example is how you can more dynamically free and reallocate nodes, which you would need to do if you're changing the text in them dynamically. But if all you need are text labels then have a look at the `src/label.js` and `src/icon-label.js` classes; they make it trivial. You'll need to import these as ES2015+ modules as they are not part of the main distribution builds, and there is no documentation for them just yet. There are test scripts for them though.
 
 ### Usage ###
 
 This is an asynchronous example, and thus it makes use of Promises. The jsfiddle examples use the slightly simpler synchronous approach which does not need Promises.
+
+The library can be imported as a ES2016+ module, or loaded directly in the browser through its UMD build. See the jsfiddle examples for the UMD approach.
 
 ```javascript
 
@@ -128,10 +122,9 @@ Please see [the API reference](docs/API.md) for the public interface.
 
 ### Development ###
 
-Install node.js (on Linux I recommend highly [nvm](https://github.com/creationix/nvm) for that) and check out the repository. Then:
+Install a reasonably modern version of node.js such as v12 or up (on Linux I highly recommend [nvm](https://github.com/creationix/nvm) for managing your node installations) and check out this repository. Then:
 
 ```bash
-$ npm install -g gulp
 $ cd three-sprite-texture-atlas-manager/
 $ npm install
 ```
@@ -141,29 +134,37 @@ Now your environment should be entirely set up, and the commands below should ru
 To run the tests:
 
 ```bash
-$ gulp test
+$ npm run test
 ```
 
-For a test coverage report:
+To run the tests while waiting for changes to any files, re-running the tests:
 
 ```bash
-$ gulp coverage
+$ npm run watch
+```
+
+For a test coverage report (the actual coverage report may or may not work correctly yet):
+
+```bash
+$ npm run coverage
 ```
 
 Build the documentation:
 
 ```bash
-$ gulp docs
+$ npm run docs
 ```
 
 Build the libraries in the `dist/` folder:
 
 ```bash
-$ gulp build
+$ npm run build
 ```
 
 
 ### TODO ###
+
+I don't use this module myself at the moment, so further development on this isn't happening. PR's are welcome.
 
 * Better usage documentation, right now it may not be obvious how to release and reallocate new nodes properly.
 * Documentation plus examples for the higher level `Label` and `LabelIcon` ES2015 modules.
@@ -172,7 +173,7 @@ $ gulp build
 
 ### License ###
 
-Copyright 2015-2016 [Lianna Eeftinck](https://github.com/leeft/)
+Copyright 2015-2021 [Lianna Eeftinck](https://github.com/leeft/)
 
 MIT License
 

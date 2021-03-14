@@ -11,5 +11,5 @@ var textureManager = new window.threeSpriteAtlasTextureManager( 512 );
 * @param {integer} [size=1024] Optional size for the textures. Must be a power of two.
 */
 
-import TextureManager from './texture-manager';
+import TextureManager from './texture-manager.js';
 export default TextureManager;

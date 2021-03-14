@@ -1,5 +1,4 @@
 {
-  "parser": "babel-eslint",
   "extends": "eslint:recommended",
   "globals": {
     "document": true,
@@ -10,7 +9,14 @@
     "stub": true,
     "expect": true
   },
+  "parserOptions": {
+    "ecmaVersion": 8
+  },
+  "rules": {
+    "no-console": [ 0 ]
+  },
   "env": {
+    "es6": true,
     "browser": true,
     "mocha": true,
     "node": true
