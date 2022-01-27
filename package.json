@@ -60,7 +60,7 @@
     "sinon-chai": "^3.5.0"
   },
   "dependencies": {
-    "three": "^0.126.1"
+    "three": "^0.137.0"
   },
   "babelBoilerplateOptions": {
     "entryFileName": "three-sprite-texture-atlas-manager",
